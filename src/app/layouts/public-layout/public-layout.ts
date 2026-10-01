@@ -9,6 +9,7 @@ import {
 import { AuthService } from '../../core/services/auth.service';
 import { CartService } from '../../core/services/cart.service';
 import { TourService } from '../../core/services/tour.service';
+import { Logo } from '../../shared/ui/logo/logo';
 import { UserMenu } from '../../shared/ui/user-menu/user-menu';
 
 @Component({
@@ -22,6 +23,7 @@ import { UserMenu } from '../../shared/ui/user-menu/user-menu';
     LucideShoppingCart,
     LucideStore,
     UserMenu,
+    Logo,
   ],
   templateUrl: './public-layout.html',
   styleUrl: './public-layout.css',

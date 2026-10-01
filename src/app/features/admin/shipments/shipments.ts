@@ -5,18 +5,28 @@ import { extractError } from '../../../core/api/extract-error';
 import { OrdersApi } from '../../../core/api/orders.api';
 import { ShipmentsApi } from '../../../core/api/shipments.api';
 import type { Order, Shipment, ShipmentStatus } from '../../../core/models';
+import { ProductNamesService } from '../../../core/services/product-names.service';
 import { ToastService } from '../../../core/services/toast.service';
 import { formatDateTime, formatMoney, shortId } from '../../../core/util/format';
 import { StatusBadge } from '../../../shared/status-badge/status-badge';
 import { CopyId } from '../../../shared/ui/copy-id/copy-id';
 import { FieldError } from '../../../shared/ui/form/field-error';
 import { ValidatedSubmit } from '../../../shared/ui/form/validated-submit';
+import { ListSkeleton } from '../../../shared/ui/list-skeleton/list-skeleton';
 
 const STATUSES: ShipmentStatus[] = ['CREATED', 'SHIPPED', 'DELIVERED'];
 
 @Component({
   selector: 'app-shipments',
-  imports: [FormsModule, RouterLink, StatusBadge, CopyId, FieldError, ValidatedSubmit],
+  imports: [
+    FormsModule,
+    RouterLink,
+    StatusBadge,
+    CopyId,
+    FieldError,
+    ValidatedSubmit,
+    ListSkeleton,
+  ],
   templateUrl: './shipments.html',
   styleUrl: './shipments.css',
 })
@@ -24,6 +34,7 @@ export class Shipments implements OnInit {
   private readonly shipmentsApi = inject(ShipmentsApi);
   private readonly ordersApi = inject(OrdersApi);
   private readonly toast = inject(ToastService);
+  protected readonly productNames = inject(ProductNamesService);
 
   protected readonly shipments = signal<Shipment[]>([]);
   protected readonly orders = signal<Order[]>([]);
@@ -71,6 +82,7 @@ export class Shipments implements OnInit {
   protected readonly shortId = shortId;
 
   async ngOnInit(): Promise<void> {
+    void this.productNames.load();
     try {
       await this.load();
     } catch (err) {
@@ -80,14 +92,9 @@ export class Shipments implements OnInit {
     }
   }
 
-  protected unitsLabel(order: Order): string {
-    const units = order.items.reduce((n, i) => n + i.quantity, 0);
-    return `${units} ${units === 1 ? 'artículo' : 'artículos'}`;
-  }
-
-  protected itemsLabel(shipment: Shipment): string {
+  protected contentOf(shipment: Shipment): string {
     const order = this.orders().find((o) => o.id === shipment.orderId);
-    return order ? this.unitsLabel(order) : '—';
+    return order ? this.productNames.summarize(order.items) : 'Pedido no disponible';
   }
 
   private async load(): Promise<void> {

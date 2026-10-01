@@ -1,6 +1,6 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
 import { AuthApi } from '../api/auth.api';
-import type { LoginRequest, RegisterRequest, User } from '../models';
+import type { AuthenticationResponse, LoginRequest, RegisterRequest, User } from '../models';
 import { clearAuth, loadAuth, saveAuth } from '../storage';
 
 @Injectable({ providedIn: 'root' })
@@ -18,10 +18,15 @@ export class AuthService {
 
   async login(payload: LoginRequest): Promise<User> {
     const response = await this.authApi.login(payload);
+    this.adopt(response);
+    return response.user;
+  }
+
+  // Inicia la sesión a partir de una respuesta de login ya obtenida.
+  adopt(response: AuthenticationResponse): void {
     this._token.set(response.token);
     this._user.set(response.user);
     saveAuth({ token: response.token, user: response.user });
-    return response.user;
   }
 
   async register(payload: RegisterRequest): Promise<User> {

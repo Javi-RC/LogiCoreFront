@@ -16,6 +16,7 @@ import { compactId, formatDateTime, formatTime } from '../../../core/util/format
 import { StatusBadge } from '../../../shared/status-badge/status-badge';
 import { CopyId } from '../../../shared/ui/copy-id/copy-id';
 import { Pager, paginate } from '../../../shared/ui/pager/pager';
+import { ListSkeleton } from '../../../shared/ui/list-skeleton/list-skeleton';
 
 const REFRESH_INTERVAL_MS = 15000;
 
@@ -39,7 +40,7 @@ const notifMeta: Record<string, { label: string; tone: string }> = {
 
 @Component({
   selector: 'app-notifications',
-  imports: [FormsModule, LucideRefreshCw, LucideSearch, StatusBadge, CopyId, Pager],
+  imports: [FormsModule, LucideRefreshCw, LucideSearch, StatusBadge, CopyId, Pager, ListSkeleton],
   templateUrl: './notifications.html',
   styleUrl: './notifications.css',
 })

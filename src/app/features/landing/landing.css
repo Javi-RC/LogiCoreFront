@@ -55,18 +55,6 @@ main {
   text-decoration: none;
 }
 
-.brand-mark {
-  width: 32px;
-  height: 32px;
-  border-radius: 8px;
-  background: var(--primary);
-  color: #fff;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 800;
-}
-
 .landing-header-actions {
   display: flex;
   align-items: center;
@@ -89,15 +77,6 @@ main {
   font-size: 0.9375rem;
 }
 
-.btn-light {
-  background: #fff;
-  color: #3730a3;
-}
-
-.btn-light:hover {
-  background: #eef2ff;
-}
-
 .btn-outline-light {
   background: transparent;
   color: #fff;
@@ -108,14 +87,13 @@ main {
   background: rgba(255, 255, 255, 0.12);
 }
 
-.btn-light:focus-visible,
 .btn-outline-light:focus-visible {
   outline-color: #fff;
 }
 
 /* Hero */
 .hero {
-  background: linear-gradient(120deg, #4f46e5 0%, #7c3aed 100%);
+  background: var(--hero-bg);
   color: #fff;
   padding: 64px 0 72px;
 }
@@ -150,6 +128,23 @@ main {
   max-width: 54ch;
   opacity: 0.95;
   margin-bottom: 28px;
+}
+
+.demo-label {
+  margin: 0 0 10px;
+  font-weight: 600;
+}
+
+.hero-alt {
+  margin: 14px 0 0;
+  font-size: 0.875rem;
+  opacity: 0.95;
+}
+
+.hero-alt a {
+  color: #fff;
+  font-weight: 600;
+  text-decoration: underline;
 }
 
 .hero-actions {
@@ -227,6 +222,9 @@ main {
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  transition:
+    background 0.3s ease,
+    border-color 0.3s ease;
 }
 
 .preview-done .preview-node {
@@ -387,7 +385,7 @@ main {
 }
 
 .cta {
-  background: linear-gradient(120deg, #4f46e5 0%, #7c3aed 100%);
+  background: var(--hero-bg);
   color: #fff;
   padding: 48px 0;
 }

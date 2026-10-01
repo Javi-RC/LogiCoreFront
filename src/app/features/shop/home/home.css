@@ -1,6 +1,6 @@
 .hero {
-  background: linear-gradient(120deg, var(--primary) 0%, #7c3aed 100%);
-  color: #fff;
+  background: var(--hero-bg);
+  color: var(--hero-ink);
   padding: 34px 0;
   margin-bottom: 24px;
 }
@@ -31,7 +31,7 @@
 
 .search-box input {
   width: 100%;
-  border: none;
+  border: 1px solid var(--line);
   border-radius: var(--radius-full);
   padding: 10px 16px 10px 38px;
   font-size: 0.9rem;

@@ -1,7 +1,9 @@
 export interface ApiError {
-  timestamp: string;
   status: number;
-  error: string;
   message: string;
-  path: string;
+  // Los servicios envían `code`; el gateway, en sus propios errores, `error`.
+  code?: string;
+  error?: string;
+  timestamp?: string;
+  path?: string;
 }

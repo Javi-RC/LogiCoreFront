@@ -30,7 +30,7 @@
   }
 
   @if (loading()) {
-    <div class="empty" role="status"><span class="spinner"></span> Cargando…</div>
+    <div class="card"><app-list-skeleton [rows]="6" /></div>
   } @else if (updatedAt()) {
     <section class="card todo-card" aria-labelledby="todo-title">
       <h2 id="todo-title" class="card-title">Pendiente de acción</h2>
@@ -70,13 +70,13 @@
       <a routerLink="/admin/orders" class="stat">
         <svg lucideShoppingCart [size]="18" class="stat-icon"></svg>
         <span class="stat-label">Pedidos</span>
-        <strong>{{ funnel().orders }}</strong>
-        <small class="muted">{{ funnel().failed }} fallidos o cancelados</small>
+        <strong>{{ pipeline().total }}</strong>
+        <small class="muted">{{ pipeline().failed }} fallidos o cancelados</small>
       </a>
       <a routerLink="/admin/shipments" class="stat">
         <svg lucideCircleCheck [size]="18" class="stat-icon"></svg>
         <span class="stat-label">Envíos entregados</span>
-        <strong>{{ funnel().delivered }}</strong>
+        <strong>{{ deliveredShipments() }}</strong>
         <small class="muted">de {{ shipments().length }} envíos</small>
       </a>
       <a routerLink="/admin/notifications" class="stat">
@@ -87,44 +87,70 @@
       </a>
     </div>
 
-    <div class="card">
-      <h2 class="card-title">Embudo de pedidos</h2>
-      <div class="funnel-labels">
-        @for (status of funnel().statuses; track status.key) {
-          <div class="funnel-label" [class]="'funnel-' + status.tone">
-            @switch (status.icon) {
-              @case ('clock') {
-                <svg lucideClock [size]="18"></svg>
-              }
-              @case ('package-open') {
-                <svg lucidePackageOpen [size]="18"></svg>
-              }
-              @case ('activity') {
-                <svg lucideActivity [size]="18"></svg>
-              }
-              @case ('boxes') {
-                <svg lucideBoxes [size]="18"></svg>
-              }
+    <section class="card" aria-labelledby="pipeline-title">
+      <div class="card-head">
+        <h2 id="pipeline-title" class="card-title">Flujo de pedidos</h2>
+        <span class="pipeline-total muted">
+          {{ pipeline().active }} {{ pipeline().active === 1 ? 'pedido' : 'pedidos' }} en el flujo
+        </span>
+      </div>
+
+      @if (pipeline().active > 0) {
+        <div class="pipeline-bar" role="img" [attr.aria-label]="pipelineSummary()">
+          @for (stage of pipeline().stages; track stage.key; let i = $index) {
+            @if (stage.count > 0) {
+              <span
+                class="pipeline-seg"
+                [class]="'stage-' + (i + 1)"
+                [class.pipeline-dim]="hovered() !== null && hovered() !== stage.key"
+                [style.flex-grow]="stage.count"
+                [title]="stage.label + ': ' + stage.count + ' (' + stage.share + ' %)'"
+                (mouseenter)="hovered.set(stage.key)"
+                (mouseleave)="hovered.set(null)"
+              ></span>
             }
-            <div>
-              <strong>{{ status.label }}</strong>
-              <span class="funnel-count">{{ status.count }}</span>
-              <small class="muted">{{ status.desc }}</small>
-            </div>
-          </div>
+          }
+        </div>
+      }
+
+      <ol class="pipeline-stages">
+        @for (stage of pipeline().stages; track stage.key; let i = $index) {
+          <li>
+            <a
+              class="pipeline-stage"
+              [class.pipeline-stage-active]="hovered() === stage.key"
+              [routerLink]="stage.to"
+              [queryParams]="stage.query"
+              (mouseenter)="hovered.set(stage.key)"
+              (mouseleave)="hovered.set(null)"
+              (focus)="hovered.set(stage.key)"
+              (blur)="hovered.set(null)"
+            >
+              <span class="pipeline-label">
+                <span class="pipeline-swatch" [class]="'stage-' + (i + 1)"></span>
+                {{ stage.label }}
+              </span>
+              <strong class="pipeline-count">{{ stage.count }}</strong>
+              <small class="muted">{{ stage.share }} % · {{ stage.desc }}</small>
+            </a>
+          </li>
         }
-      </div>
-      <div class="funnel-bars">
-        @for (status of funnel().statuses; track status.key) {
-          <div class="funnel-bar" [class]="'funnel-' + status.tone">
-            <div
-              class="funnel-bar-fill"
-              [style.width.%]="(status.count / funnel().max) * 100"
-            ></div>
-          </div>
-        }
-      </div>
-    </div>
+      </ol>
+
+      @if (pipeline().failed > 0) {
+        <a routerLink="/admin/orders" class="pipeline-failed">
+          <svg lucideCircleAlert [size]="16"></svg>
+          <span>
+            <strong>{{ pipeline().failed }}</strong>
+            {{
+              pipeline().failed === 1
+                ? 'pedido fallido o cancelado'
+                : 'pedidos fallidos o cancelados'
+            }}, fuera del flujo
+          </span>
+        </a>
+      }
+    </section>
 
     <div class="card">
       <div class="card-head">
@@ -145,7 +171,12 @@
           <tbody>
             @for (order of recent(); track order.id) {
               <tr>
-                <td data-label="Pedido"><app-copy-id [value]="order.id" [length]="6" /></td>
+                <td class="cell-main">
+                  <div>
+                    <strong>{{ productNames.summarize(order.items) }}</strong>
+                    <div class="cell-sub"><app-copy-id [value]="order.id" [length]="8" /></div>
+                  </div>
+                </td>
                 <td data-label="Total">{{ formatMoney(order.total) }}</td>
                 <td data-label="Creado" class="muted">{{ formatDateTime(order.createdAt) }}</td>
                 <td data-label="Estado"><span [appStatusBadge]="order.status"></span></td>

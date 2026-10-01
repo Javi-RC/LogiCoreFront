@@ -1,0 +1,79 @@
+:host {
+  display: block;
+}
+
+.demo-buttons {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.demo-btn {
+  flex: 1 1 200px;
+  min-height: 46px;
+  padding: 10px 18px;
+  font-size: 0.9375rem;
+}
+
+.demo-btn-main {
+  background: var(--primary);
+  color: var(--on-primary);
+}
+
+.demo-btn-main:hover:not(:disabled) {
+  background: var(--primary-dark);
+}
+
+.demo-btn-alt {
+  background: var(--surface);
+  color: var(--ink);
+  border-color: var(--line);
+}
+
+.demo-btn-alt:hover:not(:disabled) {
+  background: var(--bg);
+}
+
+.demo-status {
+  min-height: 1.4em;
+  margin: 8px 0 0;
+  font-size: 0.8125rem;
+  color: var(--muted);
+}
+
+.demo-status:empty {
+  display: none;
+}
+
+.demo-error {
+  margin: 8px 0 0;
+  padding: 8px 12px;
+  border-radius: var(--radius-sm);
+  background: var(--danger-soft);
+  color: var(--danger);
+  font-size: 0.8125rem;
+  font-weight: 600;
+}
+
+/* Sobre el degradado del hero */
+.demo-light .demo-btn-alt {
+  background: transparent;
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.55);
+}
+
+.demo-light .demo-btn-alt:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.demo-light .demo-btn:focus-visible {
+  outline-color: #fff;
+}
+
+.demo-light .demo-status {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.demo-light .demo-error {
+  background: #fff;
+}

@@ -14,6 +14,7 @@ import {
   LucideX,
 } from '@lucide/angular';
 import { TourService } from '../../core/services/tour.service';
+import { Logo } from '../../shared/ui/logo/logo';
 import { UserMenu } from '../../shared/ui/user-menu/user-menu';
 import { ADMIN_NAV } from './admin-nav';
 import { CommandPalette } from './command-palette/command-palette';
@@ -37,6 +38,7 @@ import { CommandPalette } from './command-palette/command-palette';
     LucideX,
     UserMenu,
     CommandPalette,
+    Logo,
   ],
   templateUrl: './admin-layout.html',
   styleUrl: './admin-layout.css',

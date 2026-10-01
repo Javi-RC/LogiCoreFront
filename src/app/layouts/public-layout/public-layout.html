@@ -3,7 +3,7 @@
   <header class="topbar">
     <div class="container topbar-inner">
       <a routerLink="/" class="brand" aria-label="LogiCore, ir a la tienda">
-        <span class="brand-mark">L</span>
+        <app-logo />
         <span class="brand-name">LogiCore</span>
       </a>
 
@@ -36,9 +36,10 @@
           <svg lucideShoppingCart [size]="18"></svg>
           <span class="nav-label">Carrito</span>
           @if (cart.count()) {
-            <span class="cart-badge">
-              {{ cart.count() }}<span class="sr-only"> artículos</span>
-            </span>
+            <!-- track por valor: al cambiar la cantidad el nodo se recrea y repite la animación -->
+            @for (count of [cart.count()]; track count) {
+              <span class="cart-badge">{{ count }}<span class="sr-only"> artículos</span></span>
+            }
           }
         </a>
       </nav>

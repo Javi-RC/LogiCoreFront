@@ -4,7 +4,7 @@
   <header class="landing-header">
     <div class="container landing-header-inner">
       <a routerLink="/" class="brand" aria-label="LogiCore, inicio">
-        <span class="brand-mark">L</span>
+        <app-logo />
         <span>LogiCore</span>
       </a>
       <div class="landing-header-actions">
@@ -37,13 +37,13 @@
             stock, se confirma, se genera el envío y se entrega, y puedes seguir cada evento en
             directo.
           </p>
-          <div class="hero-actions">
-            <a routerLink="/register" class="btn btn-light btn-lg">
-              Crear cuenta
-              <svg lucideArrowRight [size]="18"></svg>
-            </a>
-            <a routerLink="/login" class="btn btn-outline-light btn-lg">Ya tengo cuenta</a>
-          </div>
+          <p class="demo-label">Pruébalo ahora, sin registrarte:</p>
+          <app-demo-access tone="light" />
+          <p class="hero-alt">
+            ¿Prefieres tu propia cuenta?
+            <a routerLink="/register">Crear cuenta</a> ·
+            <a routerLink="/login">Iniciar sesión</a>
+          </p>
         </div>
 
         <div class="preview" role="img" aria-label="Ejemplo del seguimiento en vivo de un pedido">
@@ -52,10 +52,10 @@
               <span class="preview-label">Pedido</span>
               <code>3F9A21C07B</code>
             </div>
-            <span class="badge badge-confirmed">Confirmado</span>
+            <span class="badge" [class]="'badge-' + badge().tone">{{ badge().label }}</span>
           </div>
           <ol class="preview-steps" aria-hidden="true">
-            @for (step of preview; track step.title) {
+            @for (step of preview(); track step.title) {
               <li [class]="'preview-step preview-' + step.state">
                 <span class="preview-node">
                   @switch (step.state) {
@@ -102,7 +102,7 @@
             <span class="step-icon"><svg lucideTruck [size]="22"></svg></span>
             <span class="step-number">Paso 3</span>
             <h3>Envío</h3>
-            <p>Operaciones genera el envío del pedido confirmado y lo despacha.</p>
+            <p>Al confirmarse el pedido se genera su envío, y operaciones lo despacha.</p>
           </li>
           <li class="step">
             <span class="step-icon"><svg lucidePackageCheck [size]="22"></svg></span>
@@ -117,7 +117,7 @@
     <section class="section section-alt" aria-labelledby="espacios">
       <div class="container">
         <h2 id="espacios" class="section-title">Dos espacios, un mismo flujo</h2>
-        <p class="section-lead">Al registrarte eliges con qué tipo de cuenta quieres entrar.</p>
+        <p class="section-lead">La tienda es para quien compra; el panel, para quien opera.</p>
         <div class="roles">
           <article class="role card">
             <span class="role-icon"><svg lucideStore [size]="22"></svg></span>
@@ -161,7 +161,7 @@
       <div class="container cta-inner">
         <h2 id="empezar">Pruébalo con tu primer pedido</h2>
         <div class="hero-actions">
-          <a routerLink="/register" class="btn btn-light btn-lg">Crear cuenta</a>
+          <a routerLink="/register" class="btn btn-primary btn-lg">Crear cuenta</a>
           <a routerLink="/login" class="btn btn-outline-light btn-lg">Iniciar sesión</a>
         </div>
       </div>

@@ -22,20 +22,6 @@
   margin-bottom: 20px;
 }
 
-.auth-brand .brand-mark {
-  width: 44px;
-  height: 44px;
-  border-radius: 10px;
-  background: var(--primary);
-  color: #fff;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.3rem;
-  font-weight: 800;
-  margin-bottom: 10px;
-}
-
 .auth-brand h1 {
   font-size: 1.5rem;
 }
@@ -51,6 +37,7 @@
   margin: 16px 0 0;
 }
 
-.auth-brand .brand-mark:hover {
-  text-decoration: none;
+.brand-link {
+  display: inline-flex;
+  margin-bottom: 10px;
 }

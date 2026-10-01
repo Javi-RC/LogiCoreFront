@@ -1,4 +1,4 @@
-import { Component, OnInit, computed, inject, linkedSignal, signal } from '@angular/core';
+import { Component, OnInit, computed, inject, input, linkedSignal, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { LucideSearch } from '@lucide/angular';
@@ -6,15 +6,19 @@ import { extractError } from '../../../core/api/extract-error';
 import { OrdersApi } from '../../../core/api/orders.api';
 import type { Order, OrderStatus } from '../../../core/models';
 import { ConfirmService } from '../../../core/services/confirm.service';
+import { ProductNamesService } from '../../../core/services/product-names.service';
 import { ToastService } from '../../../core/services/toast.service';
 import { compactId, formatDateTime, formatMoney, shortId } from '../../../core/util/format';
 import { StatusBadge } from '../../../shared/status-badge/status-badge';
 import { CopyId } from '../../../shared/ui/copy-id/copy-id';
 import { Pager, paginate } from '../../../shared/ui/pager/pager';
+import { ListSkeleton } from '../../../shared/ui/list-skeleton/list-skeleton';
+
+const STATUSES: OrderStatus[] = ['PENDING', 'CONFIRMED', 'CANCELLED', 'FAILED'];
 
 @Component({
   selector: 'app-admin-orders',
-  imports: [FormsModule, RouterLink, LucideSearch, StatusBadge, CopyId, Pager],
+  imports: [FormsModule, RouterLink, LucideSearch, StatusBadge, CopyId, Pager, ListSkeleton],
   templateUrl: './orders.html',
   styleUrl: './orders.css',
 })
@@ -22,6 +26,10 @@ export class AdminOrders implements OnInit {
   private readonly ordersApi = inject(OrdersApi);
   private readonly confirm = inject(ConfirmService);
   private readonly toast = inject(ToastService);
+  protected readonly productNames = inject(ProductNamesService);
+
+  // Query param ?estado=PENDING: lo usa el dashboard para enlazar a una etapa.
+  readonly estado = input<string>();
 
   protected readonly orders = signal<Order[]>([]);
   protected readonly loading = signal(true);
@@ -29,7 +37,10 @@ export class AdminOrders implements OnInit {
   protected readonly busyId = signal<string | null>(null);
 
   protected readonly search = signal('');
-  protected readonly statusFilter = signal<OrderStatus | 'ALL'>('ALL');
+  protected readonly statusFilter = linkedSignal<OrderStatus | 'ALL'>(() => {
+    const estado = this.estado() as OrderStatus;
+    return STATUSES.includes(estado) ? estado : 'ALL';
+  });
 
   // La búsqueda acepta el ID corto que muestra la tabla o el UUID completo.
   private readonly searched = computed(() => {
@@ -76,6 +87,7 @@ export class AdminOrders implements OnInit {
   protected readonly formatMoney = formatMoney;
 
   async ngOnInit(): Promise<void> {
+    void this.productNames.load();
     try {
       await this.load();
     } catch (err) {

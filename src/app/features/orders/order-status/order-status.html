@@ -34,8 +34,9 @@
           <svg lucideArrowLeft [size]="16"></svg>
           {{ backLabel() ?? 'Mis pedidos' }}
         </a>
-        <h1>Pedido <app-copy-id [value]="order.id" [length]="10" /></h1>
+        <h1>{{ title() }}</h1>
         <p class="subtitle">
+          Pedido <app-copy-id [value]="order.id" [length]="10" /> ·
           {{ formatDateTime(order.createdAt) }} · {{ formatMoney(order.total) }}
         </p>
       </div>

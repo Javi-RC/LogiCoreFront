@@ -10,6 +10,7 @@ import { ToastService } from '../../../core/services/toast.service';
 import { newUuid } from '../../../core/util/format';
 import { FieldError } from '../../../shared/ui/form/field-error';
 import { ValidatedSubmit } from '../../../shared/ui/form/validated-submit';
+import { ListSkeleton } from '../../../shared/ui/list-skeleton/list-skeleton';
 
 interface Row {
   product: Product;
@@ -18,7 +19,7 @@ interface Row {
 
 @Component({
   selector: 'app-inventory',
-  imports: [FormsModule, RouterLink, LucideCircleAlert, FieldError, ValidatedSubmit],
+  imports: [FormsModule, RouterLink, LucideCircleAlert, FieldError, ValidatedSubmit, ListSkeleton],
   templateUrl: './inventory.html',
   styleUrl: './inventory.css',
 })

@@ -1,0 +1,36 @@
+@if (demo.enabled) {
+  <div class="demo" [class.demo-light]="tone() === 'light'">
+    <div class="demo-buttons" role="group" aria-label="Entrar en la demo">
+      <button
+        class="btn demo-btn demo-btn-main"
+        type="button"
+        [disabled]="!!demo.busy()"
+        (click)="demo.enter('CUSTOMER')"
+      >
+        @if (demo.busy() === 'CUSTOMER') {
+          <span class="spinner"></span>
+        } @else {
+          <svg lucideStore [size]="18"></svg>
+        }
+        Entrar como cliente
+      </button>
+      <button
+        class="btn demo-btn demo-btn-alt"
+        type="button"
+        [disabled]="!!demo.busy()"
+        (click)="demo.enter('ADMIN')"
+      >
+        @if (demo.busy() === 'ADMIN') {
+          <span class="spinner"></span>
+        } @else {
+          <svg lucideLayoutDashboard [size]="18"></svg>
+        }
+        Entrar como administrador
+      </button>
+    </div>
+    <p class="demo-status" role="status">{{ demo.status() }}</p>
+    @if (demo.error()) {
+      <p class="demo-error" role="alert">{{ demo.error() }}</p>
+    }
+  </div>
+}

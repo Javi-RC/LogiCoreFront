@@ -1,41 +1,73 @@
 <article class="product-card">
-  <div class="product-head">
-    <h2 class="product-name">{{ product().name }}</h2>
-    <span class="product-price">{{ formatMoney(product().price) }}</span>
+  <div class="product-visual" [class]="'family-' + visual().family">
+    @switch (visual().family) {
+      @case ('packaging') {
+        <svg lucidePackage [size]="40" [strokeWidth]="1.5"></svg>
+      }
+      @case ('labels') {
+        <svg lucideTag [size]="40" [strokeWidth]="1.5"></svg>
+      }
+      @case ('equipment') {
+        <svg lucideForklift [size]="40" [strokeWidth]="1.5"></svg>
+      }
+      @case ('supplies') {
+        <svg lucideHand [size]="40" [strokeWidth]="1.5"></svg>
+      }
+      @default {
+        <svg lucideBox [size]="40" [strokeWidth]="1.5"></svg>
+      }
+    }
+    <span class="product-family">{{ visual().label }}</span>
   </div>
-  <p class="product-sku muted">{{ product().sku }}</p>
-  <p class="product-desc">{{ product().description }}</p>
-  @if (inCart() > 0) {
-    <p class="product-incart">
-      <svg lucideCheck [size]="14"></svg>
-      {{ inCart() }} en tu carrito
-    </p>
-  }
-  <div class="product-actions">
-    <div class="stepper" role="group" [attr.aria-label]="'Cantidad de ' + product().name">
+  <div class="product-body">
+    <div class="product-head">
+      <h2 class="product-name">{{ product().name }}</h2>
+      <span class="product-price">{{ formatMoney(product().price) }}</span>
+    </div>
+    <p class="product-sku muted">{{ product().sku }}</p>
+    <p class="product-desc">{{ product().description }}</p>
+    @if (inCart() > 0) {
+      <p class="product-incart">
+        <svg lucideCheck [size]="14"></svg>
+        {{ inCart() }} en tu carrito
+      </p>
+    }
+    <div class="product-actions">
+      <div class="stepper" role="group" [attr.aria-label]="'Cantidad de ' + product().name">
+        <button
+          class="stepper-btn"
+          type="button"
+          aria-label="Restar uno"
+          [disabled]="quantity() <= 1"
+          (click)="step(-1)"
+        >
+          <svg lucideMinus [size]="16"></svg>
+        </button>
+        <span class="stepper-value" aria-live="polite">{{ quantity() }}</span>
+        <button
+          class="stepper-btn"
+          type="button"
+          aria-label="Sumar uno"
+          [disabled]="quantity() >= max"
+          (click)="step(1)"
+        >
+          <svg lucidePlus [size]="16"></svg>
+        </button>
+      </div>
       <button
-        class="stepper-btn"
+        class="btn btn-primary product-add"
+        [class.product-add-done]="added()"
         type="button"
-        aria-label="Restar uno"
-        [disabled]="quantity() <= 1"
-        (click)="step(-1)"
+        (click)="emitAdd()"
       >
-        <svg lucideMinus [size]="16"></svg>
-      </button>
-      <span class="stepper-value" aria-live="polite">{{ quantity() }}</span>
-      <button
-        class="stepper-btn"
-        type="button"
-        aria-label="Sumar uno"
-        [disabled]="quantity() >= max"
-        (click)="step(1)"
-      >
-        <svg lucidePlus [size]="16"></svg>
+        @if (added()) {
+          <svg lucideCheck [size]="16"></svg>
+          Añadido
+        } @else {
+          <svg lucideShoppingCart [size]="16"></svg>
+          Añadir
+        }
       </button>
     </div>
-    <button class="btn btn-primary product-add" type="button" (click)="emitAdd()">
-      <svg lucideShoppingCart [size]="16"></svg>
-      Añadir
-    </button>
   </div>
 </article>

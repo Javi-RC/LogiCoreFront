@@ -43,3 +43,12 @@
     margin-top: 0;
   }
 }
+
+.order-link {
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.order-link:hover {
+  color: var(--primary);
+}

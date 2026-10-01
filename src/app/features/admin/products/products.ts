@@ -23,6 +23,7 @@ import { StatusBadge } from '../../../shared/status-badge/status-badge';
 import { FieldError } from '../../../shared/ui/form/field-error';
 import { ValidatedSubmit } from '../../../shared/ui/form/validated-submit';
 import { Pager, paginate } from '../../../shared/ui/pager/pager';
+import { ListSkeleton } from '../../../shared/ui/list-skeleton/list-skeleton';
 
 type StatusFilter = 'ALL' | 'ACTIVE' | 'INACTIVE';
 
@@ -39,7 +40,15 @@ function emptyForm(): ProductForm {
 
 @Component({
   selector: 'app-products',
-  imports: [FormsModule, LucideSearch, StatusBadge, FieldError, ValidatedSubmit, Pager],
+  imports: [
+    FormsModule,
+    LucideSearch,
+    StatusBadge,
+    FieldError,
+    ValidatedSubmit,
+    Pager,
+    ListSkeleton,
+  ],
   templateUrl: './products.html',
   styleUrl: './products.css',
 })
