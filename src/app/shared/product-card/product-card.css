@@ -7,17 +7,73 @@
   border: 1px solid var(--line);
   border-radius: var(--radius);
   box-shadow: var(--shadow);
-  padding: 16px;
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  transition: transform var(--transition), box-shadow var(--transition), border-color var(--transition);
+  overflow: hidden;
+  transition:
+    transform var(--transition),
+    box-shadow var(--transition),
+    border-color var(--transition);
 }
 
 .product-card:hover {
   transform: translateY(-2px);
   box-shadow: var(--shadow-md);
-  border-color: var(--primary-soft);
+  border-color: var(--primary);
+}
+
+/* Sin fotos en el catálogo: un bloque con el icono y el tono de la familia. */
+.product-visual {
+  position: relative;
+  height: 104px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--family-soft);
+  color: var(--family);
+}
+
+.product-family {
+  position: absolute;
+  left: 12px;
+  bottom: 10px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.family-packaging {
+  --family: var(--primary);
+  --family-soft: var(--primary-soft);
+}
+
+.family-labels {
+  --family: var(--info);
+  --family-soft: var(--info-soft);
+}
+
+.family-equipment {
+  --family: var(--violet);
+  --family-soft: var(--violet-soft);
+}
+
+.family-supplies {
+  --family: var(--success);
+  --family-soft: var(--success-soft);
+}
+
+.family-other {
+  --family: var(--muted);
+  --family-soft: var(--bg);
+}
+
+.product-body {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+  padding: 16px;
 }
 
 .product-head {
@@ -36,7 +92,7 @@
 
 .product-price {
   font-weight: 800;
-  color: var(--primary);
+  color: var(--ink);
   white-space: nowrap;
 }
 
