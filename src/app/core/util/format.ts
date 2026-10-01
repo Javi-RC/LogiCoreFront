@@ -39,9 +39,12 @@ export function initials(name: string): string {
     .join('');
 }
 
+export function compactId(uuid: string): string {
+  return uuid.replace(/-/g, '').toUpperCase();
+}
+
 export function shortId(uuid: string, length = 8): string {
-  const compact = uuid.replace(/-/g, '').toUpperCase();
-  return compact.slice(0, length);
+  return compactId(uuid).slice(0, length);
 }
 
 export async function copyToClipboard(text: string): Promise<boolean> {

@@ -4,79 +4,129 @@
       <h1>Inventario</h1>
       <p class="subtitle">Niveles de stock por producto y operaciones manuales</p>
     </div>
+    <button
+      class="btn btn-primary"
+      type="button"
+      [attr.aria-expanded]="showForm()"
+      (click)="showForm.set(!showForm())"
+    >
+      {{ showForm() ? 'Cerrar' : '+ Registrar stock' }}
+    </button>
   </div>
 
   @if (error()) {
-    <div class="alert alert-error">{{ error() }}</div>
+    <div class="alert alert-error" role="alert">{{ error() }}</div>
+  }
+
+  @if (!loading() && rows().length > 0) {
+    <div class="stock-filters" role="group" aria-label="Filtrar inventario">
+      <button
+        type="button"
+        class="chip"
+        [class.chip-active]="!onlyLow()"
+        [attr.aria-pressed]="!onlyLow()"
+        (click)="onlyLow.set(false)"
+      >
+        Todos <span class="chip-count">{{ rows().length }}</span>
+      </button>
+      <button
+        type="button"
+        class="chip"
+        [class.chip-active]="onlyLow()"
+        [attr.aria-pressed]="onlyLow()"
+        (click)="onlyLow.set(true)"
+      >
+        Stock bajo <span class="chip-count">{{ lowCount() }}</span>
+      </button>
+      <span class="stock-totals muted">
+        {{ totals().available }} unidades disponibles · {{ totals().reserved }} reservadas
+      </span>
+    </div>
+  }
+
+  @if (showForm()) {
+    <div class="card">
+      <h2 class="card-title">Registrar stock</h2>
+      <form class="register-form" (appSubmit)="register()">
+        <div class="field">
+          <label for="registerProductId">Producto</label>
+          <select
+            id="registerProductId"
+            name="registerProductId"
+            [(ngModel)]="registerProductId"
+            #productCtrl="ngModel"
+            [disabled]="products().length === 0"
+            required
+          >
+            <option value="" disabled>Selecciona un producto…</option>
+            @for (p of products(); track p.id) {
+              <option [value]="p.id">{{ p.name }} ({{ p.sku }})</option>
+            }
+          </select>
+          <app-field-error [control]="productCtrl" />
+        </div>
+        <div class="field">
+          <label for="registerQty">Cantidad</label>
+          <input
+            id="registerQty"
+            name="registerQty"
+            [(ngModel)]="registerQty"
+            #qtyCtrl="ngModel"
+            type="number"
+            min="0"
+            required
+          />
+          <app-field-error [control]="qtyCtrl" />
+        </div>
+        <button type="submit" class="btn btn-primary" [disabled]="registering()">
+          @if (registering()) {
+            <span class="spinner"></span>
+          }
+          Registrar
+        </button>
+      </form>
+    </div>
   }
 
   <div class="card">
-    <h3 class="card-title">Registrar stock</h3>
-    <form class="register-form" ngNativeValidate (ngSubmit)="register()">
-      <div class="field">
-        <label>Producto</label>
-        <select
-          name="registerProductId"
-          [(ngModel)]="registerProductId"
-          [disabled]="products().length === 0"
-          required
-        >
-          <option value="" disabled>Selecciona un producto…</option>
-          @for (p of products(); track p.id) {
-            <option [value]="p.id">{{ p.name }} ({{ p.sku }})</option>
-          }
-        </select>
-      </div>
-      <div class="field">
-        <label>Cantidad</label>
-        <input name="registerQty" [(ngModel)]="registerQty" type="number" min="0" required />
-      </div>
-      <button type="submit" class="btn btn-primary" [disabled]="registering()">
-        @if (registering()) {
-          <span class="spinner"></span>
-        }
-        Registrar
-      </button>
-    </form>
-  </div>
-
-  <div class="card">
     @if (loading()) {
-      <div class="empty"><span class="spinner"></span> Cargando…</div>
+      <div class="empty" role="status"><span class="spinner"></span> Cargando…</div>
     } @else {
       <div class="table-wrap">
-        <table class="table">
+        <table class="table table-stack">
           <thead>
             <tr>
               <th>Producto</th>
               <th>Disponible</th>
               <th>Reservado</th>
               <th style="width: 200px">Distribución</th>
-              <th style="width: 110px">Cantidad</th>
+              <th style="width: 110px">Unidades</th>
               <th style="width: 200px">Acciones</th>
             </tr>
           </thead>
           <tbody>
-            @for (row of rows(); track row.product.id) {
+            @for (row of visibleRows(); track row.product.id) {
               <tr [class.row-low]="lowStock(row.stock)">
-                <td>
-                  <strong>{{ row.product.name }}</strong>
-                  <div class="muted" style="font-size: 0.78rem">{{ row.product.sku }}</div>
-                  @if (lowStock(row.stock)) {
-                    <span class="pill-low">
-                      <svg lucideCircleAlert [size]="12"></svg>Stock bajo
-                    </span>
-                  }
+                <td class="cell-product">
+                  <div>
+                    <strong>{{ row.product.name }}</strong>
+                    <div class="muted" style="font-size: 0.78rem">{{ row.product.sku }}</div>
+                    @if (lowStock(row.stock)) {
+                      <span class="pill-low">
+                        <svg lucideCircleAlert [size]="12"></svg>Stock bajo
+                      </span>
+                    }
+                  </div>
                 </td>
-                <td>
+                <td data-label="Disponible">
                   <span class="qty-pill">{{ row.stock ? row.stock.availableQuantity : 0 }}</span>
                 </td>
-                <td>
+                <td data-label="Reservado">
                   <span class="qty-pill muted">{{
                     row.stock ? row.stock.reservedQuantity : 0
                   }}</span>
                 </td>
-                <td>
+                <td class="cell-bar">
                   <div class="stock-bar" aria-hidden="true">
                     <div
                       class="stock-bar-available"
@@ -88,15 +138,17 @@
                     ></div>
                   </div>
                   @if (!row.stock) {
-                    <div class="muted" style="font-size: 0.72rem">sin stock</div>
+                    <div class="muted" style="font-size: 0.72rem">sin stock registrado</div>
                   }
                 </td>
-                <td>
+                <td data-label="Unidades">
                   <input
                     [(ngModel)]="opQty[row.product.id]"
                     type="number"
                     min="1"
+                    placeholder="1"
                     class="qty-input"
+                    [attr.aria-label]="'Unidades a reservar o liberar de ' + row.product.name"
                     [disabled]="!row.stock"
                   />
                 </td>
@@ -124,7 +176,14 @@
               </tr>
             } @empty {
               <tr>
-                <td class="empty" colspan="6">Aún no hay productos. Créalos desde Productos.</td>
+                <td class="empty" colspan="6">
+                  @if (onlyLow()) {
+                    Ningún producto tiene stock bajo.
+                  } @else {
+                    Aún no hay productos.
+                    <a routerLink="/admin/products">Crea el primero en Productos</a>.
+                  }
+                </td>
               </tr>
             }
           </tbody>

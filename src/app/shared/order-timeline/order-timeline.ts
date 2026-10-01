@@ -23,21 +23,21 @@ const defs: StepDef[] = [
   {
     key: 'created',
     title: 'Pedido creado',
-    desc: 'El pedido entra a la cola y la saga empieza',
+    desc: 'Hemos recibido tu pedido',
     event: 'ORDER_CREATED',
     tone: 'info',
   },
   {
     key: 'confirmed',
     title: 'Stock reservado',
-    desc: 'El inventario reserva las unidades y el pedido se confirma',
+    desc: 'Reservamos las unidades y confirmamos el pedido',
     event: 'ORDER_CONFIRMED',
     tone: 'success',
   },
   {
     key: 'shipment-created',
     title: 'Envío generado',
-    desc: 'La logística prepara el paquete',
+    desc: 'Estamos preparando tu paquete',
     event: 'SHIPMENT_CREATED',
     tone: 'warning',
   },
@@ -51,7 +51,7 @@ const defs: StepDef[] = [
   {
     key: 'delivered',
     title: 'Entregado',
-    desc: 'El pedido llega al cliente',
+    desc: 'El pedido ha llegado a su destino',
     tone: 'success',
   },
 ];

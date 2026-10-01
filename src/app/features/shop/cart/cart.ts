@@ -1,6 +1,12 @@
 import { Component, inject, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
-import { LucideMinus, LucidePlus, LucideShoppingCart, LucideTrash } from '@lucide/angular';
+import {
+  LucideArrowLeft,
+  LucideMinus,
+  LucidePlus,
+  LucideShoppingCart,
+  LucideTrash,
+} from '@lucide/angular';
 import { extractError } from '../../../core/api/extract-error';
 import { OrdersApi } from '../../../core/api/orders.api';
 import { AuthService } from '../../../core/services/auth.service';
@@ -12,7 +18,15 @@ import { EmptyState } from '../../../shared/ui/empty-state/empty-state';
 
 @Component({
   selector: 'app-cart',
-  imports: [RouterLink, LucideMinus, LucidePlus, LucideShoppingCart, LucideTrash, EmptyState],
+  imports: [
+    RouterLink,
+    LucideArrowLeft,
+    LucideMinus,
+    LucidePlus,
+    LucideShoppingCart,
+    LucideTrash,
+    EmptyState,
+  ],
   templateUrl: './cart.html',
   styleUrl: './cart.css',
 })

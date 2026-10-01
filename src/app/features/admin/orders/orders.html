@@ -4,26 +4,45 @@
       <h1>Pedidos</h1>
       <p class="subtitle">Todos los pedidos y su estado en la saga</p>
     </div>
-    <form class="filter" (ngSubmit)="load()">
+    <div class="search-field">
+      <svg lucideSearch [size]="16" class="search-field-icon"></svg>
       <input
-        name="filterCustomer"
-        [(ngModel)]="filterCustomer"
-        placeholder="Filtrar por customerId…"
+        type="search"
+        [ngModel]="search()"
+        (ngModelChange)="search.set($event)"
+        placeholder="Buscar por ID de pedido o cliente…"
+        aria-label="Buscar por ID de pedido o de cliente"
       />
-      <button class="btn btn-secondary" type="submit">Filtrar</button>
-    </form>
+    </div>
   </div>
 
   @if (error()) {
-    <div class="alert alert-error">{{ error() }}</div>
+    <div class="alert alert-error" role="alert">{{ error() }}</div>
+  }
+
+  @if (!loading()) {
+    <div class="status-filters" role="group" aria-label="Filtrar por estado">
+      @for (opt of statusOptions(); track opt.value) {
+        <button
+          type="button"
+          class="chip"
+          [class.chip-active]="statusFilter() === opt.value"
+          [attr.aria-pressed]="statusFilter() === opt.value"
+          (click)="statusFilter.set(opt.value)"
+        >
+          {{ opt.label }}
+          <span class="chip-count">{{ opt.count }}</span>
+        </button>
+      }
+    </div>
   }
 
   <div class="card">
     @if (loading()) {
-      <div class="empty"><span class="spinner"></span> Cargando…</div>
+      <div class="empty" role="status"><span class="spinner"></span> Cargando…</div>
     } @else {
       <div class="table-wrap">
-        <table class="table">
+        <table class="table table-stack">
           <thead>
             <tr>
               <th>Pedido</th>
@@ -35,28 +54,30 @@
             </tr>
           </thead>
           <tbody>
-            @for (order of orders(); track order.id) {
+            @for (order of pagedOrders(); track order.id) {
               <tr>
-                <td>
-                  <code>{{ shortId(order.id) }}</code>
+                <td data-label="Pedido"><app-copy-id [value]="order.id" [length]="8" /></td>
+                <td data-label="Cliente">
+                  <app-copy-id [value]="order.customerId" [length]="8" />
                 </td>
-                <td>
-                  <code>{{ shortId(order.customerId) }}</code>
-                </td>
-                <td>{{ formatMoney(order.total) }}</td>
-                <td class="muted">{{ formatDateTime(order.createdAt) }}</td>
-                <td><span [appStatusBadge]="order.status"></span></td>
+                <td data-label="Total">{{ formatMoney(order.total) }}</td>
+                <td data-label="Creado" class="muted">{{ formatDateTime(order.createdAt) }}</td>
+                <td data-label="Estado"><span [appStatusBadge]="order.status"></span></td>
                 <td>
                   <div class="row-actions">
-                    <button class="btn btn-ghost btn-sm" [routerLink]="['/orders', order.id]">
+                    <a class="btn btn-secondary btn-sm" [routerLink]="['/admin/orders', order.id]">
                       Ver
-                    </button>
+                    </a>
                     @if (order.status === 'PENDING' || order.status === 'CONFIRMED') {
                       <button
                         class="btn btn-ghost btn-sm"
+                        type="button"
                         [disabled]="busyId() === order.id"
                         (click)="cancel(order)"
                       >
+                        @if (busyId() === order.id) {
+                          <span class="spinner"></span>
+                        }
                         Cancelar
                       </button>
                     }
@@ -65,12 +86,22 @@
               </tr>
             } @empty {
               <tr>
-                <td class="empty" colspan="6">No hay pedidos.</td>
+                <td class="empty" colspan="6">
+                  @if (filtered()) {
+                    Ningún pedido coincide con los filtros.
+                    <button class="btn btn-ghost btn-sm" type="button" (click)="clearFilters()">
+                      Limpiar filtros
+                    </button>
+                  } @else {
+                    Aún no hay pedidos. Aparecerán aquí cuando un cliente compre en la tienda.
+                  }
+                </td>
               </tr>
             }
           </tbody>
         </table>
       </div>
+      <app-pager [total]="visibleOrders().length" [pageSize]="pageSize" [(page)]="page" />
     }
   </div>
 </div>

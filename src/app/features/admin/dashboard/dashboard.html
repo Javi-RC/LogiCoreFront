@@ -20,40 +20,75 @@
     </div>
   </div>
 
+  @if (error()) {
+    <div class="alert alert-error" role="alert">
+      {{ error() }}
+      @if (updatedAt()) {
+        Se muestran los últimos datos cargados.
+      }
+    </div>
+  }
+
   @if (loading()) {
-    <div class="empty"><span class="spinner"></span> Cargando…</div>
-  } @else if (error()) {
-    <div class="alert alert-error">{{ error() }}</div>
-  } @else {
+    <div class="empty" role="status"><span class="spinner"></span> Cargando…</div>
+  } @else if (updatedAt()) {
+    <section class="card todo-card" aria-labelledby="todo-title">
+      <h2 id="todo-title" class="card-title">Pendiente de acción</h2>
+      @if (todos().length === 0) {
+        <p class="todo-clear">
+          <svg lucideCircleCheck [size]="18"></svg>
+          Todo al día: no hay pedidos ni envíos esperando.
+        </p>
+      } @else {
+        <ul class="todo-list">
+          @for (todo of todos(); track todo.key) {
+            <li>
+              <a [routerLink]="todo.to" [queryParams]="todo.query" class="todo-item">
+                <span class="todo-count">{{ todo.count }}</span>
+                <span class="todo-text">
+                  <strong>{{ todo.title }}</strong>
+                  <small class="muted">{{ todo.hint }}</small>
+                </span>
+                <span class="todo-cta">
+                  {{ todo.cta }}
+                  <svg lucideArrowRight [size]="16"></svg>
+                </span>
+              </a>
+            </li>
+          }
+        </ul>
+      }
+    </section>
+
     <div class="stats">
-      <div class="stat">
+      <a routerLink="/admin/products" class="stat">
         <svg lucidePackage [size]="18" class="stat-icon"></svg>
         <span class="stat-label">Productos</span>
         <strong>{{ stats().products }}</strong>
         <small class="muted">{{ stats().activeProducts }} activos</small>
-      </div>
-      <div class="stat">
+      </a>
+      <a routerLink="/admin/orders" class="stat">
         <svg lucideShoppingCart [size]="18" class="stat-icon"></svg>
         <span class="stat-label">Pedidos</span>
-        <strong>{{ funnel().total }}</strong>
+        <strong>{{ funnel().orders }}</strong>
         <small class="muted">{{ funnel().failed }} fallidos o cancelados</small>
-      </div>
-      <div class="stat">
+      </a>
+      <a routerLink="/admin/shipments" class="stat">
         <svg lucideCircleCheck [size]="18" class="stat-icon"></svg>
         <span class="stat-label">Envíos entregados</span>
         <strong>{{ funnel().delivered }}</strong>
-        <small class="muted">saga completada</small>
-      </div>
-      <div class="stat">
+        <small class="muted">de {{ shipments().length }} envíos</small>
+      </a>
+      <a routerLink="/admin/notifications" class="stat">
         <svg lucideActivity [size]="18" class="stat-icon"></svg>
         <span class="stat-label">Actividad</span>
         <strong>{{ notifications().length }}</strong>
-        <small class="muted">eventos emitidos por la saga</small>
-      </div>
+        <small class="muted">eventos registrados</small>
+      </a>
     </div>
 
     <div class="card">
-      <h3 class="card-title">Funnel de la saga</h3>
+      <h2 class="card-title">Embudo de pedidos</h2>
       <div class="funnel-labels">
         @for (status of funnel().statuses; track status.key) {
           <div class="funnel-label" [class]="'funnel-' + status.tone">
@@ -92,29 +127,37 @@
     </div>
 
     <div class="card">
-      <h3 class="card-title">Últimos pedidos</h3>
+      <div class="card-head">
+        <h2 class="card-title">Últimos pedidos</h2>
+        <a routerLink="/admin/orders" class="card-link">Ver todos</a>
+      </div>
       <div class="table-wrap">
-        <table class="table">
+        <table class="table table-stack">
           <thead>
             <tr>
               <th>Pedido</th>
               <th>Total</th>
               <th>Creado</th>
               <th>Estado</th>
+              <th><span class="sr-only">Acciones</span></th>
             </tr>
           </thead>
           <tbody>
             @for (order of recent(); track order.id) {
               <tr>
-                <td><app-copy-id [value]="order.id" [length]="6" /></td>
-                <td>{{ formatMoney(order.total) }}</td>
-                <td>{{ formatDateTime(order.createdAt) }}</td>
-                <td><span [appStatusBadge]="order.status"></span></td>
+                <td data-label="Pedido"><app-copy-id [value]="order.id" [length]="6" /></td>
+                <td data-label="Total">{{ formatMoney(order.total) }}</td>
+                <td data-label="Creado" class="muted">{{ formatDateTime(order.createdAt) }}</td>
+                <td data-label="Estado"><span [appStatusBadge]="order.status"></span></td>
+                <td>
+                  <a class="btn btn-ghost btn-sm" [routerLink]="['/admin/orders', order.id]">Ver</a>
+                </td>
               </tr>
             } @empty {
               <tr>
-                <td class="empty" colspan="4">
-                  Aún no hay pedidos. Puedes crearlo desde la tienda.
+                <td class="empty" colspan="5">
+                  Aún no hay pedidos. Crea uno desde la <a routerLink="/">tienda</a> para ver la
+                  saga en marcha.
                 </td>
               </tr>
             }

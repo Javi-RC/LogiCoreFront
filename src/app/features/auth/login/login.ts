@@ -3,10 +3,12 @@ import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { extractError } from '../../../core/api/extract-error';
 import { AuthService } from '../../../core/services/auth.service';
+import { FieldError } from '../../../shared/ui/form/field-error';
+import { ValidatedSubmit } from '../../../shared/ui/form/validated-submit';
 
 @Component({
   selector: 'app-login',
-  imports: [FormsModule, RouterLink],
+  imports: [FormsModule, RouterLink, FieldError, ValidatedSubmit],
   templateUrl: './login.html',
   styleUrl: './login.css',
 })

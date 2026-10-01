@@ -4,7 +4,40 @@
   gap: 10px;
 }
 
+.header-tools {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.status-filters {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin: 16px 0 12px;
+}
+
+.row-editing,
+.table tbody tr.row-editing:hover {
+  background: var(--primary-soft);
+}
+
 .row-actions {
   display: flex;
   gap: 4px;
+}
+
+.btn-delete {
+  color: var(--danger);
+}
+
+@media (max-width: 640px) {
+  .cell-name {
+    text-align: left;
+  }
+
+  .row-actions {
+    flex-wrap: wrap;
+  }
 }

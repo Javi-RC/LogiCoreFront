@@ -28,7 +28,7 @@
       <span>LogiCore<br /><small>Administración</small></span>
     </a>
 
-    <nav class="sidebar-nav">
+    <nav class="sidebar-nav" aria-label="Administración">
       @for (section of sections; track section.label) {
         <div class="sidebar-section">
           <span class="section-label">{{ section.label }}</span>
@@ -36,7 +36,8 @@
             <a
               [routerLink]="link.to"
               routerLinkActive="sidebar-link-active"
-              [routerLinkActiveOptions]="{ exact: true }"
+              ariaCurrentWhenActive="page"
+              [routerLinkActiveOptions]="{ exact: link.to === '/admin' }"
               class="sidebar-link"
             >
               <ng-container
@@ -68,32 +69,28 @@
       >
         <svg lucideMenu [size]="20"></svg>
       </button>
-      <div class="header-spacer"></div>
       <button
-        class="btn btn-ghost btn-icon"
+        class="search-trigger"
         type="button"
-        (click)="theme.toggle()"
-        [attr.aria-label]="'Cambiar a tema ' + (theme.theme() === 'dark' ? 'claro' : 'oscuro')"
+        aria-label="Buscar en el panel"
+        aria-keyshortcuts="Control+K"
+        (click)="paletteOpen.set(true)"
       >
-        @if (theme.theme() === 'dark') {
-          <svg lucideSun [size]="18"></svg>
-        } @else {
-          <svg lucideMoon [size]="18"></svg>
-        }
+        <svg lucideSearch [size]="16"></svg>
+        <span class="search-trigger-text">Buscar pedidos, productos, envíos…</span>
+        <kbd class="search-trigger-kbd">Ctrl K</kbd>
       </button>
-      <div class="user-chip">
-        <span class="avatar">{{ initials(auth.user()?.name ?? '') }}</span>
-        <div class="user-chip-text">
-          <strong>{{ auth.user()?.name }}</strong>
-          <span>Administrador</span>
-        </div>
-        <button class="btn btn-ghost btn-sm" (click)="logout()">Salir</button>
-      </div>
+      <div class="header-spacer"></div>
+      <app-user-menu />
     </header>
     <main>
       <router-outlet />
     </main>
   </div>
+
+  @if (paletteOpen()) {
+    <app-command-palette (closed)="paletteOpen.set(false)" />
+  }
 
   @if (drawerOpen()) {
     <div class="drawer-overlay" (click)="drawerOpen.set(false)">
@@ -120,17 +117,30 @@
             <div class="sidebar-section">
               <span class="section-label">{{ section.label }}</span>
               @for (link of section.links; track link.to) {
-                <button class="sidebar-link drawer-link" type="button" (click)="go(link.to)">
+                <a
+                  [routerLink]="link.to"
+                  routerLinkActive="sidebar-link-active"
+                  ariaCurrentWhenActive="page"
+                  [routerLinkActiveOptions]="{ exact: link.to === '/admin' }"
+                  class="sidebar-link"
+                  (click)="drawerOpen.set(false)"
+                >
                   <ng-container
                     [ngTemplateOutlet]="navIcon"
                     [ngTemplateOutletContext]="{ $implicit: link.icon, klass: null }"
                   />
                   {{ link.label }}
-                </button>
+                </a>
               }
             </div>
           }
         </nav>
+        <div class="sidebar-footer">
+          <a routerLink="/" class="sidebar-link" (click)="drawerOpen.set(false)">
+            <svg lucideStore [size]="18"></svg>
+            Ver tienda
+          </a>
+        </div>
       </div>
     </div>
   }

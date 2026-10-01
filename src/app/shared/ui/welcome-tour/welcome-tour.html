@@ -1,0 +1,65 @@
+@if (tour.open()) {
+  <div class="modal-overlay">
+    <div
+      #dialog
+      class="modal tour"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="tour-title"
+      aria-describedby="tour-text"
+      (keydown)="onKeydown($event, dialog)"
+    >
+      <div class="tour-top">
+        <span class="tour-progress">Paso {{ index() + 1 }} de {{ steps().length }}</span>
+        <button class="btn btn-ghost btn-sm" type="button" (click)="tour.finish()">
+          Saltar guía
+        </button>
+      </div>
+
+      <span class="tour-icon" aria-hidden="true">
+        @switch (step().icon) {
+          @case ('store') {
+            <svg lucideStore [size]="28"></svg>
+          }
+          @case ('cart') {
+            <svg lucideShoppingCart [size]="28"></svg>
+          }
+          @case ('tracking') {
+            <svg lucidePackageCheck [size]="28"></svg>
+          }
+          @case ('package') {
+            <svg lucidePackage [size]="28"></svg>
+          }
+          @case ('truck') {
+            <svg lucideTruck [size]="28"></svg>
+          }
+          @case ('activity') {
+            <svg lucideActivity [size]="28"></svg>
+          }
+        }
+      </span>
+
+      <div aria-live="polite">
+        <h2 id="tour-title" class="tour-title">{{ step().title }}</h2>
+        <p id="tour-text" class="tour-text">{{ step().text }}</p>
+      </div>
+
+      <div class="tour-dots" aria-hidden="true">
+        @for (s of steps(); track s.title; let i = $index) {
+          <span class="tour-dot" [class.tour-dot-active]="i === index()"></span>
+        }
+      </div>
+
+      <div class="tour-actions">
+        @if (index() > 0) {
+          <button class="btn btn-secondary" type="button" (click)="index.set(index() - 1)">
+            Atrás
+          </button>
+        }
+        <button class="btn btn-primary tour-next" type="button" (click)="next()">
+          {{ isLast() ? 'Empezar' : 'Siguiente' }}
+        </button>
+      </div>
+    </div>
+  </div>
+}

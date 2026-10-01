@@ -1,19 +1,41 @@
 <article class="product-card">
   <div class="product-head">
-    <span class="product-name">{{ product().name }}</span>
+    <h2 class="product-name">{{ product().name }}</h2>
     <span class="product-price">{{ formatMoney(product().price) }}</span>
   </div>
   <p class="product-sku muted">{{ product().sku }}</p>
   <p class="product-desc">{{ product().description }}</p>
+  @if (inCart() > 0) {
+    <p class="product-incart">
+      <svg lucideCheck [size]="14"></svg>
+      {{ inCart() }} en tu carrito
+    </p>
+  }
   <div class="product-actions">
-    <input
-      [(ngModel)]="quantity"
-      type="number"
-      min="1"
-      max="99"
-      class="qty"
-      aria-label="Cantidad"
-    />
-    <button class="btn btn-primary btn-sm" (click)="emitAdd()">Agregar</button>
+    <div class="stepper" role="group" [attr.aria-label]="'Cantidad de ' + product().name">
+      <button
+        class="stepper-btn"
+        type="button"
+        aria-label="Restar uno"
+        [disabled]="quantity() <= 1"
+        (click)="step(-1)"
+      >
+        <svg lucideMinus [size]="16"></svg>
+      </button>
+      <span class="stepper-value" aria-live="polite">{{ quantity() }}</span>
+      <button
+        class="stepper-btn"
+        type="button"
+        aria-label="Sumar uno"
+        [disabled]="quantity() >= max"
+        (click)="step(1)"
+      >
+        <svg lucidePlus [size]="16"></svg>
+      </button>
+    </div>
+    <button class="btn btn-primary product-add" type="button" (click)="emitAdd()">
+      <svg lucideShoppingCart [size]="16"></svg>
+      Añadir
+    </button>
   </div>
 </article>

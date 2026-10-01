@@ -1,10 +1,11 @@
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { LucideArrowDownWideNarrow, LucideSearch } from '@lucide/angular';
+import { LucideArrowDownWideNarrow, LucideSearch, LucideSearchX } from '@lucide/angular';
 import { extractError } from '../../../core/api/extract-error';
 import { ProductsApi } from '../../../core/api/products.api';
 import type { Product } from '../../../core/models';
 import { CartService } from '../../../core/services/cart.service';
+import { ToastService } from '../../../core/services/toast.service';
 import { ProductCard } from '../../../shared/product-card/product-card';
 import { EmptyState } from '../../../shared/ui/empty-state/empty-state';
 
@@ -13,13 +14,21 @@ type PriceFilter = 'all' | 'lt50' | '50-100' | 'gt100';
 
 @Component({
   selector: 'app-home',
-  imports: [FormsModule, LucideArrowDownWideNarrow, LucideSearch, ProductCard, EmptyState],
+  imports: [
+    FormsModule,
+    LucideArrowDownWideNarrow,
+    LucideSearch,
+    LucideSearchX,
+    ProductCard,
+    EmptyState,
+  ],
   templateUrl: './home.html',
   styleUrl: './home.css',
 })
 export class Home implements OnInit {
   private readonly productsApi = inject(ProductsApi);
   private readonly cart = inject(CartService);
+  private readonly toast = inject(ToastService);
 
   protected readonly products = signal<Product[]>([]);
   // Los filtros alimentan un computed, así que son signals.
@@ -28,6 +37,16 @@ export class Home implements OnInit {
   protected readonly priceFilter = signal<PriceFilter>('all');
   protected readonly loading = signal(true);
   protected readonly error = signal('');
+
+  protected readonly inCart = computed<Record<string, number>>(() =>
+    Object.fromEntries(this.cart.lines().map((line) => [line.productId, line.quantity])),
+  );
+
+  protected readonly skeletonCards = [1, 2, 3, 4, 5, 6];
+
+  protected readonly hasFilters = computed(
+    () => this.query().trim() !== '' || this.priceFilter() !== 'all',
+  );
 
   protected readonly sortOptions: { value: SortKey; label: string }[] = [
     { value: 'name', label: 'Nombre (A–Z)' },
@@ -98,7 +117,17 @@ export class Home implements OnInit {
     }
   }
 
+  protected clearFilters(): void {
+    this.query.set('');
+    this.priceFilter.set('all');
+  }
+
   protected addToCart(product: Product, quantity: number): void {
     this.cart.add(product, quantity);
+    this.toast.success(
+      quantity === 1
+        ? `«${product.name}» añadido al carrito`
+        : `${quantity} × «${product.name}» añadidos al carrito`,
+    );
   }
 }

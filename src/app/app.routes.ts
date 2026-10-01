@@ -1,7 +1,7 @@
 import { Routes } from '@angular/router';
 import { adminGuard } from './core/guards/admin.guard';
 import { authGuard } from './core/guards/auth.guard';
-import { guestGuard } from './core/guards/guest.guard';
+import { guestGuard, guestMatch } from './core/guards/guest.guard';
 
 export const routes: Routes = [
   {
@@ -15,6 +15,13 @@ export const routes: Routes = [
     title: 'Crear cuenta · LogiCore',
     canActivate: [guestGuard],
     loadComponent: () => import('./features/auth/register/register').then((m) => m.Register),
+  },
+  {
+    path: '',
+    pathMatch: 'full',
+    canMatch: [guestMatch],
+    title: 'LogiCore · Del carrito a la entrega',
+    loadComponent: () => import('./features/landing/landing').then((m) => m.Landing),
   },
   {
     path: '',
@@ -38,6 +45,11 @@ export const routes: Routes = [
         title: 'Mis pedidos · LogiCore',
         loadComponent: () =>
           import('./features/orders/orders-list/orders-list').then((m) => m.OrdersList),
+      },
+      {
+        path: 'account',
+        title: 'Mi cuenta · LogiCore',
+        loadComponent: () => import('./features/account/account').then((m) => m.Account),
       },
       {
         path: 'orders/:id',
@@ -74,6 +86,13 @@ export const routes: Routes = [
         path: 'orders',
         title: 'Pedidos · LogiCore',
         loadComponent: () => import('./features/admin/orders/orders').then((m) => m.AdminOrders),
+      },
+      {
+        path: 'orders/:id',
+        title: 'Pedido · LogiCore',
+        data: { backTo: '/admin/orders', backLabel: 'Pedidos' },
+        loadComponent: () =>
+          import('./features/orders/order-status/order-status').then((m) => m.OrderStatus),
       },
       {
         path: 'shipments',

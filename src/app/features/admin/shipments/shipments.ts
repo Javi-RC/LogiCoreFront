@@ -1,16 +1,22 @@
-import { Component, OnInit, computed, inject, signal } from '@angular/core';
+import { Component, OnInit, computed, inject, input, linkedSignal, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 import { extractError } from '../../../core/api/extract-error';
 import { OrdersApi } from '../../../core/api/orders.api';
 import { ShipmentsApi } from '../../../core/api/shipments.api';
-import type { Order, Shipment } from '../../../core/models';
+import type { Order, Shipment, ShipmentStatus } from '../../../core/models';
 import { ToastService } from '../../../core/services/toast.service';
-import { formatDateTime, shortId } from '../../../core/util/format';
+import { formatDateTime, formatMoney, shortId } from '../../../core/util/format';
 import { StatusBadge } from '../../../shared/status-badge/status-badge';
+import { CopyId } from '../../../shared/ui/copy-id/copy-id';
+import { FieldError } from '../../../shared/ui/form/field-error';
+import { ValidatedSubmit } from '../../../shared/ui/form/validated-submit';
+
+const STATUSES: ShipmentStatus[] = ['CREATED', 'SHIPPED', 'DELIVERED'];
 
 @Component({
   selector: 'app-shipments',
-  imports: [FormsModule, StatusBadge],
+  imports: [FormsModule, RouterLink, StatusBadge, CopyId, FieldError, ValidatedSubmit],
   templateUrl: './shipments.html',
   styleUrl: './shipments.css',
 })
@@ -24,16 +30,44 @@ export class Shipments implements OnInit {
   protected readonly loading = signal(true);
   protected readonly error = signal('');
   protected readonly busyId = signal<string | null>(null);
-  protected readonly showForm = signal(false);
   protected readonly creating = signal(false);
+
+  // Query params (?estado=CREATED, ?crear=1): los usa el dashboard para enlazar aquí.
+  readonly estado = input<string>();
+  readonly crear = input<string>();
+
+  protected readonly showForm = linkedSignal(() => this.crear() === '1');
+  protected readonly statusFilter = linkedSignal<ShipmentStatus | 'ALL'>(() => {
+    const estado = this.estado() as ShipmentStatus;
+    return STATUSES.includes(estado) ? estado : 'ALL';
+  });
 
   protected createOrderId = '';
 
-  protected readonly availableOrders = computed(() =>
-    this.orders().filter((o) => o.status === 'CONFIRMED'),
-  );
+  protected readonly availableOrders = computed(() => {
+    const withShipment = new Set(this.shipments().map((s) => s.orderId));
+    return this.orders().filter((o) => o.status === 'CONFIRMED' && !withShipment.has(o.id));
+  });
+
+  protected readonly statusOptions = computed(() => {
+    const shipments = this.shipments();
+    const count = (status: ShipmentStatus) => shipments.filter((s) => s.status === status).length;
+    return [
+      { value: 'ALL' as const, label: 'Todos', count: shipments.length },
+      { value: 'CREATED' as const, label: 'Por despachar', count: count('CREATED') },
+      { value: 'SHIPPED' as const, label: 'En camino', count: count('SHIPPED') },
+      { value: 'DELIVERED' as const, label: 'Entregados', count: count('DELIVERED') },
+    ];
+  });
+
+  protected readonly visibleShipments = computed(() => {
+    const status = this.statusFilter();
+    const shipments = this.shipments();
+    return status === 'ALL' ? shipments : shipments.filter((s) => s.status === status);
+  });
 
   protected readonly formatDateTime = formatDateTime;
+  protected readonly formatMoney = formatMoney;
   protected readonly shortId = shortId;
 
   async ngOnInit(): Promise<void> {
@@ -46,9 +80,14 @@ export class Shipments implements OnInit {
     }
   }
 
+  protected unitsLabel(order: Order): string {
+    const units = order.items.reduce((n, i) => n + i.quantity, 0);
+    return `${units} ${units === 1 ? 'artículo' : 'artículos'}`;
+  }
+
   protected itemsLabel(shipment: Shipment): string {
     const order = this.orders().find((o) => o.id === shipment.orderId);
-    return order ? `${order.items.reduce((n, i) => n + i.quantity, 0)} artículos` : '—';
+    return order ? this.unitsLabel(order) : '—';
   }
 
   private async load(): Promise<void> {
@@ -56,7 +95,7 @@ export class Shipments implements OnInit {
       this.shipmentsApi.getShipments(),
       this.ordersApi.getOrders(),
     ]);
-    this.shipments.set(s);
+    this.shipments.set(s.sort((a, b) => b.createdAt.localeCompare(a.createdAt)));
     this.orders.set(o);
   }
 

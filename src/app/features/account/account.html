@@ -1,0 +1,87 @@
+<div class="page account-page">
+  <div class="page-header">
+    <div>
+      <h1>Mi cuenta</h1>
+      <p class="subtitle">Tus datos, la apariencia de la aplicación y tu sesión</p>
+    </div>
+  </div>
+
+  @if (auth.user(); as user) {
+    <section class="card profile" aria-label="Datos de la cuenta">
+      <span class="avatar profile-avatar" aria-hidden="true">{{ userInitials() }}</span>
+      <div class="profile-main">
+        <h2 class="profile-name">{{ user.name }}</h2>
+        <span class="badge" [class]="user.role === 'ADMIN' ? 'badge-violet' : 'badge-info'">
+          {{ user.role === 'ADMIN' ? 'Administrador' : 'Cliente' }}
+        </span>
+      </div>
+      <dl class="profile-data">
+        <div>
+          <dt>Correo electrónico</dt>
+          <dd>{{ user.email }}</dd>
+        </div>
+        @if (memberSince()) {
+          <div>
+            <dt>Miembro desde</dt>
+            <dd>{{ memberSince() }}</dd>
+          </div>
+        }
+      </dl>
+    </section>
+
+    <section class="card" aria-labelledby="appearance-title">
+      <h2 id="appearance-title" class="card-title">Apariencia</h2>
+      <div class="theme-options" role="group" aria-label="Tema de la aplicación">
+        <button
+          type="button"
+          class="theme-option"
+          [class.theme-option-active]="theme.theme() === 'light'"
+          [attr.aria-pressed]="theme.theme() === 'light'"
+          (click)="theme.set('light')"
+        >
+          <svg lucideSun [size]="18"></svg>
+          Claro
+        </button>
+        <button
+          type="button"
+          class="theme-option"
+          [class.theme-option-active]="theme.theme() === 'dark'"
+          [attr.aria-pressed]="theme.theme() === 'dark'"
+          (click)="theme.set('dark')"
+        >
+          <svg lucideMoon [size]="18"></svg>
+          Oscuro
+        </button>
+      </div>
+    </section>
+
+    <section class="card" aria-labelledby="help-title">
+      <h2 id="help-title" class="card-title">Ayuda</h2>
+      <div class="row">
+        <div>
+          <strong>Guía de bienvenida</strong>
+          <p class="muted row-text">Repasa en unos pasos cómo funciona LogiCore.</p>
+        </div>
+        <button class="btn btn-secondary" type="button" (click)="tour.start()">Ver la guía</button>
+      </div>
+      <div class="row">
+        <div>
+          <strong>Tus pedidos</strong>
+          <p class="muted row-text">Consulta el historial y el seguimiento de tus compras.</p>
+        </div>
+        <a class="btn btn-secondary" routerLink="/orders">Ir a mis pedidos</a>
+      </div>
+    </section>
+
+    <section class="card" aria-labelledby="session-title">
+      <h2 id="session-title" class="card-title">Sesión</h2>
+      <div class="row">
+        <p class="muted row-text">Cierra la sesión en este dispositivo.</p>
+        <button class="btn btn-secondary btn-logout" type="button" (click)="logout()">
+          <svg lucideLogOut [size]="16"></svg>
+          Cerrar sesión
+        </button>
+      </div>
+    </section>
+  }
+</div>

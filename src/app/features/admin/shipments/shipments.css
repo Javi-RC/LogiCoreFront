@@ -2,7 +2,31 @@
   display: grid;
   grid-template-columns: 1fr auto;
   gap: 0 12px;
-  align-items: end;
+  align-items: start;
+}
+
+.create-form > .btn {
+  margin-top: 25px;
+}
+
+.status-filters {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin: 16px 0 12px;
+}
+
+.form-card + .create-form > .btn {
+  margin-top: 25px;
+}
+
+.status-filters {
+  margin-top: 16px;
+}
+
+.no-orders {
+  margin: 0;
+  font-size: 0.875rem;
 }
 
 .row-actions {
@@ -13,5 +37,9 @@
 @media (max-width: 640px) {
   .create-form {
     grid-template-columns: 1fr;
+  }
+
+  .create-form > .btn {
+    margin-top: 0;
   }
 }

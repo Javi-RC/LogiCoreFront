@@ -25,9 +25,12 @@ export class ThemeService {
   }
 
   toggle(): void {
-    const next: Theme = this._theme() === 'dark' ? 'light' : 'dark';
-    this._theme.set(next);
-    localStorage.setItem(STORAGE_KEY, next);
-    apply(next);
+    this.set(this._theme() === 'dark' ? 'light' : 'dark');
+  }
+
+  set(theme: Theme): void {
+    this._theme.set(theme);
+    localStorage.setItem(STORAGE_KEY, theme);
+    apply(theme);
   }
 }

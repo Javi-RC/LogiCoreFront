@@ -50,3 +50,7 @@
   font-size: 0.875rem;
   margin: 16px 0 0;
 }
+
+.auth-brand .brand-mark:hover {
+  text-decoration: none;
+}
