@@ -1,17 +1,15 @@
-import { Component, computed, inject } from '@angular/core';
-import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { Component, inject } from '@angular/core';
+import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import {
   LucideClipboardList,
-  LucideLogOut,
-  LucideMoon,
+  LucideLayoutDashboard,
   LucideShoppingCart,
   LucideStore,
-  LucideSun,
 } from '@lucide/angular';
 import { AuthService } from '../../core/services/auth.service';
 import { CartService } from '../../core/services/cart.service';
-import { ThemeService } from '../../core/services/theme.service';
-import { initials } from '../../core/util/format';
+import { TourService } from '../../core/services/tour.service';
+import { UserMenu } from '../../shared/ui/user-menu/user-menu';
 
 @Component({
   selector: 'app-public-layout',
@@ -20,11 +18,10 @@ import { initials } from '../../core/util/format';
     RouterLinkActive,
     RouterOutlet,
     LucideClipboardList,
-    LucideLogOut,
-    LucideMoon,
+    LucideLayoutDashboard,
     LucideShoppingCart,
     LucideStore,
-    LucideSun,
+    UserMenu,
   ],
   templateUrl: './public-layout.html',
   styleUrl: './public-layout.css',
@@ -32,14 +29,8 @@ import { initials } from '../../core/util/format';
 export class PublicLayout {
   protected readonly auth = inject(AuthService);
   protected readonly cart = inject(CartService);
-  protected readonly theme = inject(ThemeService);
-  private readonly router = inject(Router);
 
-  protected readonly userName = computed(() => this.auth.user()?.name ?? '');
-  protected readonly initials = initials;
-
-  protected logout(): void {
-    this.auth.logout();
-    void this.router.navigateByUrl('/login', { replaceUrl: true });
+  constructor() {
+    inject(TourService).maybeStart();
   }
 }

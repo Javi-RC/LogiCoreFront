@@ -1,0 +1,81 @@
+<div class="palette-overlay" (click)="onOverlayClick($event)">
+  <div class="palette" role="dialog" aria-modal="true" aria-label="Buscador">
+    <div class="palette-search">
+      <svg lucideSearch [size]="18" class="palette-search-icon"></svg>
+      <input
+        #input
+        type="text"
+        role="combobox"
+        autocomplete="off"
+        spellcheck="false"
+        placeholder="Busca un pedido, producto, envío o sección…"
+        aria-label="Buscar en el panel"
+        aria-expanded="true"
+        aria-controls="palette-results"
+        aria-autocomplete="list"
+        [attr.aria-activedescendant]="activeId()"
+        [value]="query()"
+        (input)="query.set(input.value)"
+        (keydown)="onKeydown($event)"
+      />
+      <kbd class="palette-kbd">Esc</kbd>
+    </div>
+
+    <div id="palette-results" class="palette-results" role="listbox" aria-label="Resultados">
+      @for (group of groups(); track group.label) {
+        <div role="group" [attr.aria-label]="group.label">
+          <div class="palette-group" aria-hidden="true">{{ group.label }}</div>
+          @for (result of group.items; track result.id) {
+            <div
+              class="palette-item"
+              role="option"
+              [id]="result.id"
+              [class.palette-item-active]="result.id === activeId()"
+              [attr.aria-selected]="result.id === activeId()"
+              (mousemove)="setActive(result)"
+              (click)="open(result)"
+            >
+              <span class="palette-item-icon" aria-hidden="true">
+                @switch (result.kind) {
+                  @case ('order') {
+                    <svg lucideShoppingCart [size]="16"></svg>
+                  }
+                  @case ('product') {
+                    <svg lucidePackage [size]="16"></svg>
+                  }
+                  @case ('shipment') {
+                    <svg lucideTruck [size]="16"></svg>
+                  }
+                  @default {
+                    <svg lucideArrowRight [size]="16"></svg>
+                  }
+                }
+              </span>
+              <span class="palette-item-title">{{ result.title }}</span>
+              <span class="palette-item-detail">{{ result.detail }}</span>
+            </div>
+          }
+        </div>
+      }
+    </div>
+
+    <div class="palette-status" role="status">
+      @if (loading()) {
+        <span class="spinner"></span> Cargando pedidos, productos y envíos…
+      } @else if (flat().length === 0) {
+        Sin resultados para «{{ query().trim() }}». Prueba con el ID corto de un pedido o el nombre
+        de un producto.
+      } @else if (!query().trim()) {
+        Escribe para buscar pedidos, productos y envíos.
+      } @else {
+        {{ flat().length }} {{ flat().length === 1 ? 'resultado' : 'resultados' }}
+      }
+    </div>
+
+    <div class="palette-foot" aria-hidden="true">
+      <span><kbd class="palette-kbd">↑</kbd><kbd class="palette-kbd">↓</kbd> moverte</span>
+      <span><kbd class="palette-kbd">Enter</kbd> abrir</span>
+      <span><kbd class="palette-kbd">Esc</kbd> cerrar</span>
+    </div>
+  </div>
+</div>

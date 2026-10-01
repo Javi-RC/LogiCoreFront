@@ -4,10 +4,12 @@ import { Router, RouterLink } from '@angular/router';
 import { extractError } from '../../../core/api/extract-error';
 import type { UserRole } from '../../../core/models';
 import { AuthService } from '../../../core/services/auth.service';
+import { FieldError } from '../../../shared/ui/form/field-error';
+import { ValidatedSubmit } from '../../../shared/ui/form/validated-submit';
 
 @Component({
   selector: 'app-register',
-  imports: [FormsModule, RouterLink],
+  imports: [FormsModule, RouterLink, FieldError, ValidatedSubmit],
   templateUrl: './register.html',
   styleUrl: './register.css',
 })

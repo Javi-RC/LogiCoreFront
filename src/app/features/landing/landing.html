@@ -1,0 +1,174 @@
+<div class="landing">
+  <a class="skip-link" href="#contenido">Saltar al contenido</a>
+
+  <header class="landing-header">
+    <div class="container landing-header-inner">
+      <a routerLink="/" class="brand" aria-label="LogiCore, inicio">
+        <span class="brand-mark">L</span>
+        <span>LogiCore</span>
+      </a>
+      <div class="landing-header-actions">
+        <button
+          class="btn btn-ghost btn-icon"
+          type="button"
+          (click)="theme.toggle()"
+          [attr.aria-label]="'Cambiar a tema ' + (theme.theme() === 'dark' ? 'claro' : 'oscuro')"
+        >
+          @if (theme.theme() === 'dark') {
+            <svg lucideSun [size]="18"></svg>
+          } @else {
+            <svg lucideMoon [size]="18"></svg>
+          }
+        </button>
+        <a routerLink="/login" class="btn btn-ghost">Iniciar sesión</a>
+        <a routerLink="/register" class="btn btn-primary header-cta">Crear cuenta</a>
+      </div>
+    </div>
+  </header>
+
+  <main id="contenido">
+    <section class="hero">
+      <div class="container hero-inner">
+        <div class="hero-copy">
+          <p class="eyebrow">Demo de logística orientada a eventos</p>
+          <h1>Del carrito a la entrega, cada paso a la vista</h1>
+          <p class="hero-lead">
+            LogiCore une una tienda y un panel de operaciones. Al crear un pedido se reserva el
+            stock, se confirma, se genera el envío y se entrega, y puedes seguir cada evento en
+            directo.
+          </p>
+          <div class="hero-actions">
+            <a routerLink="/register" class="btn btn-light btn-lg">
+              Crear cuenta
+              <svg lucideArrowRight [size]="18"></svg>
+            </a>
+            <a routerLink="/login" class="btn btn-outline-light btn-lg">Ya tengo cuenta</a>
+          </div>
+        </div>
+
+        <div class="preview" role="img" aria-label="Ejemplo del seguimiento en vivo de un pedido">
+          <div class="preview-head" aria-hidden="true">
+            <div>
+              <span class="preview-label">Pedido</span>
+              <code>3F9A21C07B</code>
+            </div>
+            <span class="badge badge-confirmed">Confirmado</span>
+          </div>
+          <ol class="preview-steps" aria-hidden="true">
+            @for (step of preview; track step.title) {
+              <li [class]="'preview-step preview-' + step.state">
+                <span class="preview-node">
+                  @switch (step.state) {
+                    @case ('done') {
+                      <svg lucideCheck [size]="14"></svg>
+                    }
+                    @case ('current') {
+                      <svg lucideLoaderCircle [size]="14" class="preview-spin"></svg>
+                    }
+                  }
+                </span>
+                <span class="preview-text">
+                  <strong>{{ step.title }}</strong>
+                  <small>{{ step.detail }}</small>
+                </span>
+              </li>
+            }
+          </ol>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="como-funciona">
+      <div class="container">
+        <h2 id="como-funciona" class="section-title">Cómo funciona</h2>
+        <p class="section-lead">Un pedido recorre cuatro etapas, y todas quedan registradas.</p>
+        <ol class="steps">
+          <li class="step">
+            <span class="step-icon"><svg lucideShoppingCart [size]="22"></svg></span>
+            <span class="step-number">Paso 1</span>
+            <h3>Compra en la tienda</h3>
+            <p>Busca en el catálogo, añade productos al carrito y crea el pedido.</p>
+          </li>
+          <li class="step">
+            <span class="step-icon"><svg lucideBoxes [size]="22"></svg></span>
+            <span class="step-number">Paso 2</span>
+            <h3>Reserva de stock</h3>
+            <p>
+              El inventario reserva las unidades y el pedido se confirma. Si no puede completarse,
+              queda marcado como fallido.
+            </p>
+          </li>
+          <li class="step">
+            <span class="step-icon"><svg lucideTruck [size]="22"></svg></span>
+            <span class="step-number">Paso 3</span>
+            <h3>Envío</h3>
+            <p>Operaciones genera el envío del pedido confirmado y lo despacha.</p>
+          </li>
+          <li class="step">
+            <span class="step-icon"><svg lucidePackageCheck [size]="22"></svg></span>
+            <span class="step-number">Paso 4</span>
+            <h3>Entrega</h3>
+            <p>El seguimiento se actualiza solo hasta que el pedido llega a su destino.</p>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="section section-alt" aria-labelledby="espacios">
+      <div class="container">
+        <h2 id="espacios" class="section-title">Dos espacios, un mismo flujo</h2>
+        <p class="section-lead">Al registrarte eliges con qué tipo de cuenta quieres entrar.</p>
+        <div class="roles">
+          <article class="role card">
+            <span class="role-icon"><svg lucideStore [size]="22"></svg></span>
+            <h3>Tienda</h3>
+            <p class="muted">Para quien compra.</p>
+            <ul>
+              <li>Catálogo con búsqueda, filtros por precio y ordenación.</li>
+              <li>Carrito con resumen antes de crear el pedido.</li>
+              <li>Seguimiento en vivo de cada pedido, paso a paso.</li>
+            </ul>
+          </article>
+          <article class="role card">
+            <span class="role-icon"><svg lucideLayoutDashboard [size]="22"></svg></span>
+            <h3>Panel de administración</h3>
+            <p class="muted">Para quien opera.</p>
+            <ul>
+              <li>Productos e inventario, con aviso de stock bajo.</li>
+              <li>Pedidos y envíos, con lo pendiente de acción siempre a la vista.</li>
+              <li>Registro de actividad con todos los eventos de la saga.</li>
+            </ul>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="tecnica">
+      <div class="container tech">
+        <span class="tech-icon"><svg lucideActivity [size]="22"></svg></span>
+        <div>
+          <h2 id="tecnica" class="section-title">Qué hay debajo</h2>
+          <p class="tech-text">
+            El backend coordina pedidos, inventario, envíos y notificaciones mediante eventos de
+            Kafka, siguiendo el patrón saga. Esta aplicación es el cliente que te deja ver ese
+            recorrido de principio a fin.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="cta" aria-labelledby="empezar">
+      <div class="container cta-inner">
+        <h2 id="empezar">Pruébalo con tu primer pedido</h2>
+        <div class="hero-actions">
+          <a routerLink="/register" class="btn btn-light btn-lg">Crear cuenta</a>
+          <a routerLink="/login" class="btn btn-outline-light btn-lg">Iniciar sesión</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="landing-footer">
+    <div class="container">LogiCore · Proyecto de demostración</div>
+  </footer>
+</div>

@@ -1,13 +1,13 @@
 <div class="auth-page">
-  <form class="auth-card" ngNativeValidate (ngSubmit)="submit()">
+  <form class="auth-card" (appSubmit)="submit()">
     <div class="auth-brand">
-      <span class="brand-mark">L</span>
+      <a routerLink="/" class="brand-mark" aria-label="LogiCore, volver al inicio">L</a>
       <h1>LogiCore</h1>
       <p class="muted">Inicia sesión para continuar</p>
     </div>
 
     @if (error()) {
-      <div class="alert alert-error">{{ error() }}</div>
+      <div class="alert alert-error" role="alert">{{ error() }}</div>
     }
 
     <div class="field">
@@ -16,11 +16,15 @@
         id="email"
         name="email"
         [(ngModel)]="email"
+        #emailCtrl="ngModel"
         type="email"
         autocomplete="email"
+        aria-describedby="email-error"
         required
+        email
         autofocus
       />
+      <app-field-error id="email-error" [control]="emailCtrl" />
     </div>
 
     <div class="field">
@@ -29,17 +33,22 @@
         id="password"
         name="password"
         [(ngModel)]="password"
+        #passwordCtrl="ngModel"
         type="password"
         autocomplete="current-password"
+        aria-describedby="password-error"
         required
       />
+      <app-field-error id="password-error" [control]="passwordCtrl" />
     </div>
 
     <button type="submit" class="btn btn-primary btn-block" [disabled]="busy()">
       @if (busy()) {
         <span class="spinner"></span>
+        Entrando…
+      } @else {
+        Entrar
       }
-      Entrar
     </button>
 
     <p class="auth-alt">
