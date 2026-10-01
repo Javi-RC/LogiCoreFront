@@ -32,6 +32,18 @@ export const routes: Routes = [
         title: 'Carrito · LogiCore',
         loadComponent: () => import('./features/shop/cart/cart').then((m) => m.Cart),
       },
+      {
+        path: 'orders',
+        title: 'Mis pedidos · LogiCore',
+        loadComponent: () =>
+          import('./features/orders/orders-list/orders-list').then((m) => m.OrdersList),
+      },
+      {
+        path: 'orders/:id',
+        title: 'Estado del pedido · LogiCore',
+        loadComponent: () =>
+          import('./features/orders/order-status/order-status').then((m) => m.OrderStatus),
+      },
     ],
   },
   {

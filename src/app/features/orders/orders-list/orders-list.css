@@ -1,0 +1,17 @@
+.empty-icon {
+  color: var(--muted);
+  opacity: 0.5;
+}
+
+.orders-skeleton {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.skeleton-row-group {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}

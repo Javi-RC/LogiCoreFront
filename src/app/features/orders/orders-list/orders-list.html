@@ -1,0 +1,65 @@
+<div class="page">
+  <div class="page-header">
+    <div>
+      <h1>Mis pedidos</h1>
+      <p class="subtitle">Historial de tus compras</p>
+    </div>
+  </div>
+
+  @if (error()) {
+    <div class="alert alert-error">{{ error() }}</div>
+  }
+
+  <div class="card">
+    @if (loading()) {
+      <div class="orders-skeleton">
+        @for (n of skeletonRows; track n) {
+          <div class="skeleton-row-group">
+            <div class="skeleton skeleton-row" style="width: 140px"></div>
+            <div class="skeleton skeleton-row" style="width: 90px"></div>
+            <div class="skeleton skeleton-row" style="width: 70px"></div>
+          </div>
+        }
+      </div>
+    } @else if (orders().length === 0) {
+      <app-empty-state
+        title="No tienes pedidos aún"
+        description="Haz tu primera compra para verla aquí."
+      >
+        <svg lucidePackageOpen emptyIcon [size]="40" class="empty-icon"></svg>
+        <button emptyAction class="btn btn-primary" routerLink="/">Ver productos</button>
+      </app-empty-state>
+    } @else {
+      <div class="table-wrap">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Pedido</th>
+              <th>Estado</th>
+              <th>Creado</th>
+              <th>Total</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (order of orders(); track order.id) {
+              <tr>
+                <td>
+                  <app-copy-id [value]="order.id" [length]="8" />
+                </td>
+                <td><span [appStatusBadge]="order.status"></span></td>
+                <td class="muted">{{ formatDateTime(order.createdAt) }}</td>
+                <td class="muted">{{ formatMoney(order.total) }}</td>
+                <td>
+                  <button class="btn btn-ghost btn-sm" [routerLink]="['/orders', order.id]">
+                    Ver
+                  </button>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </div>
+</div>

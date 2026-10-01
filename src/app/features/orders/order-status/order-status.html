@@ -1,0 +1,139 @@
+<div class="page order-status-page">
+  @if (error()) {
+    <div class="alert alert-error">{{ error() }}</div>
+  } @else if (loading()) {
+    <div class="empty"><span class="spinner"></span> Cargando pedido…</div>
+  } @else if (order(); as order) {
+    <!-- Celebración -->
+    @if (delivered()) {
+      <div class="celebrate-card">
+        <svg lucidePackageCheck [size]="44" class="celebrate-icon"></svg>
+        <div class="celebrate-body">
+          <h2 class="celebrate-title">
+            <svg lucideSparkles [size]="18" class="sparkle-icon"></svg>
+            ¡Pedido entregado!
+            <svg lucideSparkles [size]="18" class="sparkle-icon"></svg>
+          </h2>
+          <p class="celebrate-sub">
+            La saga ha completado todo su ciclo: desde la creación del pedido hasta la entrega.
+          </p>
+        </div>
+        <div class="confetti">
+          @for (n of confettiDots; track n) {
+            <span class="confetti-dot" [class]="'dot-' + n"></span>
+          }
+        </div>
+      </div>
+    }
+
+    <div class="page-header">
+      <div class="header-left">
+        <a routerLink="/orders" class="back-link">
+          <svg lucideArrowLeft [size]="16"></svg>
+          Mis pedidos
+        </a>
+        <h1>Pedido <app-copy-id [value]="order.id" [length]="10" /></h1>
+      </div>
+      <span [appStatusBadge]="order.status"></span>
+    </div>
+
+    <!-- Timeline -->
+    <div class="card timeline-card">
+      <h3 class="card-title">Progreso de la saga</h3>
+      <app-order-timeline
+        [order]="order"
+        [shipment]="shipment()"
+        [notifications]="notifications()"
+      />
+    </div>
+
+    <div class="order-grid">
+      <!-- Detalle -->
+      <div class="card">
+        <h3 class="card-title">Detalle del pedido</h3>
+        <div class="meta-row">
+          <span class="muted">Creado:</span> {{ formatDateTime(order.createdAt) }}
+          <span class="muted" style="margin-left: 12px">Actualizado:</span>
+          {{ formatDateTime(order.updatedAt) }}
+        </div>
+        <div class="table-wrap">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Producto</th>
+                <th>Cant.</th>
+                <th>Unitario</th>
+                <th>Subtotal</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (item of order.items; track item.productId) {
+                <tr>
+                  <td>
+                    <code>{{ shortId(item.productId, 6) }}</code>
+                  </td>
+                  <td>{{ item.quantity }}</td>
+                  <td>{{ formatMoney(item.unitPrice) }}</td>
+                  <td>{{ formatMoney(item.subtotal) }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+        <div class="order-total"><strong>Total:</strong> {{ formatMoney(order.total) }}</div>
+        @if (order.status === 'PENDING' || order.status === 'CONFIRMED') {
+          <div class="actions">
+            <button class="btn btn-danger" [disabled]="canceling()" (click)="cancel()">
+              Cancelar pedido
+            </button>
+          </div>
+        }
+      </div>
+
+      <!-- Envío -->
+      @if (shipment(); as shipment) {
+        <div class="card">
+          <h3 class="card-title">Envío</h3>
+          <div class="shipment-row">
+            <div>
+              <span class="muted" style="font-size: 0.78rem">ID del envío</span>
+              <br />
+              <app-copy-id [value]="shipment.shipmentId" [length]="10" />
+            </div>
+            <span [appStatusBadge]="shipment.status"></span>
+          </div>
+          <div class="meta-row" style="margin-top: 10px">
+            <span class="muted">Actualizado:</span> {{ formatDateTime(shipment.updatedAt) }}
+          </div>
+        </div>
+      }
+
+      <!-- Notificaciones -->
+      <div class="card notif-card">
+        <h3 class="card-title">
+          Eventos
+          @if (!delivered() && !terminal()) {
+            <span class="muted" style="font-weight: 400; font-size: 0.78rem; margin-left: 4px">
+              se actualizan mientras la saga procesa…
+            </span>
+          }
+        </h3>
+        @if (notifications().length === 0) {
+          <div class="empty">Aún no hay eventos registrados.</div>
+        } @else {
+          <ul class="notif-list">
+            @for (n of notifications(); track n.id) {
+              <li>
+                <span [appStatusBadge]="notifLabel(n.type)" [tone]="notifTone(n.type)"></span>
+                <div>
+                  <strong>{{ n.message }}</strong>
+                  <div class="muted">{{ formatDateTime(n.createdAt) }} · {{ n.recipient }}</div>
+                </div>
+              </li>
+            }
+          </ul>
+        }
+      </div>
+    </div>
+  }
+</div>
