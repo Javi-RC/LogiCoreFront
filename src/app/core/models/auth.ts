@@ -1,0 +1,28 @@
+export type UserRole = 'CUSTOMER' | 'ADMIN';
+
+export interface LoginRequest {
+  email: string;
+  password: string;
+}
+
+export interface RegisterRequest {
+  email: string;
+  password: string;
+  name: string;
+  role: UserRole;
+}
+
+export interface User {
+  id: string;
+  email: string;
+  name: string;
+  role: UserRole;
+  createdAt: string;
+}
+
+export interface AuthenticationResponse {
+  token: string;
+  tokenType: string;
+  expiresAt: string;
+  user: User;
+}
