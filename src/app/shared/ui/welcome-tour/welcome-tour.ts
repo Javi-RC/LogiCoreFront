@@ -59,7 +59,7 @@ const ADMIN_STEPS: TourStep[] = [
   {
     icon: 'truck',
     title: 'Gestiona los envíos',
-    text: 'En «Envíos» creas el envío de cada pedido confirmado, lo despachas y lo marcas como entregado. El dashboard te avisa de lo pendiente.',
+    text: 'Cada pedido confirmado genera su envío. En «Envíos» lo despachas y lo marcas como entregado. El dashboard te avisa de lo pendiente.',
   },
   {
     icon: 'activity',

@@ -2,7 +2,6 @@ import { Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import {
   LucideActivity,
-  LucideArrowRight,
   LucideBoxes,
   LucideCheck,
   LucideLayoutDashboard,
@@ -15,6 +14,7 @@ import {
   LucideTruck,
 } from '@lucide/angular';
 import { ThemeService } from '../../core/services/theme.service';
+import { DemoAccess } from '../../shared/ui/demo-access/demo-access';
 
 interface PreviewStep {
   title: string;
@@ -26,8 +26,8 @@ interface PreviewStep {
   selector: 'app-landing',
   imports: [
     RouterLink,
+    DemoAccess,
     LucideActivity,
-    LucideArrowRight,
     LucideBoxes,
     LucideCheck,
     LucideLayoutDashboard,

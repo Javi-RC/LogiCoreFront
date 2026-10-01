@@ -152,6 +152,23 @@ main {
   margin-bottom: 28px;
 }
 
+.demo-label {
+  margin: 0 0 10px;
+  font-weight: 600;
+}
+
+.hero-alt {
+  margin: 14px 0 0;
+  font-size: 0.875rem;
+  opacity: 0.95;
+}
+
+.hero-alt a {
+  color: #fff;
+  font-weight: 600;
+  text-decoration: underline;
+}
+
 .hero-actions {
   display: flex;
   gap: 12px;

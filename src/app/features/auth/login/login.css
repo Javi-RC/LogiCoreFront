@@ -54,3 +54,17 @@
 .auth-brand .brand-mark:hover {
   text-decoration: none;
 }
+
+.auth-demo {
+  margin-top: 20px;
+  padding-top: 18px;
+  border-top: 1px solid var(--line);
+}
+
+.auth-demo-title {
+  margin: 0 0 10px;
+  text-align: center;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--muted);
+}
