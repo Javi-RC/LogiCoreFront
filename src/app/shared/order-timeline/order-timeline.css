@@ -1,0 +1,164 @@
+:host {
+  display: block;
+}
+
+.timeline {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.timeline-step {
+  position: relative;
+  display: flex;
+  gap: 12px;
+}
+
+.step-row {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  padding-bottom: 22px;
+}
+
+.step-node {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border: 2px solid var(--line);
+  background: var(--surface);
+  margin-top: 1px;
+  z-index: 1;
+}
+
+.step-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--line);
+}
+
+.timeline-pending .step-title {
+  color: var(--muted);
+}
+
+.timeline-done .step-node {
+  background: var(--success);
+  border-color: var(--success);
+}
+
+.timeline-done .step-icon {
+  color: #fff;
+}
+
+.timeline-done .step-title {
+  color: var(--ink);
+}
+
+.timeline-current .step-node {
+  border-color: var(--primary);
+  background: var(--primary-soft);
+  animation: node-pulse 2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+.timeline-current .step-icon {
+  color: var(--primary);
+}
+
+.timeline-current .step-title {
+  color: var(--primary);
+}
+
+@keyframes node-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--primary) 30%, transparent);
+  }
+  50% {
+    box-shadow: 0 0 0 8px color-mix(in srgb, var(--primary) 0%, transparent);
+  }
+}
+
+.timeline-error .step-node {
+  border-color: var(--danger);
+  background: var(--danger-soft);
+}
+
+.timeline-error .step-icon {
+  color: var(--danger);
+}
+
+.timeline-error .step-title {
+  color: var(--danger);
+}
+
+.step-body {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.step-title {
+  font-size: 0.9rem;
+}
+
+.step-desc {
+  margin: 2px 0 0;
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.step-time {
+  margin-top: 4px;
+  font-size: 0.75rem;
+}
+
+.step-live {
+  margin-top: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--primary);
+}
+
+.step-error {
+  margin-top: 4px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--danger);
+}
+
+.step-line {
+  position: absolute;
+  left: 13px;
+  top: 30px;
+  bottom: -2px;
+  width: 2px;
+  background: var(--line);
+}
+
+.timeline-step:last-child .step-line {
+  display: none;
+}
+
+.timeline-done + .timeline-step .step-line {
+  background: var(--success);
+}
+
+.timeline-error + .timeline-step .step-line,
+.timeline-step.timeline-error .step-line {
+  background: var(--danger);
+}
+
+.spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

@@ -1,0 +1,19 @@
+<article class="product-card">
+  <div class="product-head">
+    <span class="product-name">{{ product().name }}</span>
+    <span class="product-price">{{ formatMoney(product().price) }}</span>
+  </div>
+  <p class="product-sku muted">{{ product().sku }}</p>
+  <p class="product-desc">{{ product().description }}</p>
+  <div class="product-actions">
+    <input
+      [(ngModel)]="quantity"
+      type="number"
+      min="1"
+      max="99"
+      class="qty"
+      aria-label="Cantidad"
+    />
+    <button class="btn btn-primary btn-sm" (click)="emitAdd()">Agregar</button>
+  </div>
+</article>

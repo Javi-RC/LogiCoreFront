@@ -1,0 +1,38 @@
+<ol class="timeline">
+  @for (step of steps(); track step.key; let index = $index) {
+    <li class="timeline-step" [class]="'timeline-' + step.state">
+      <div class="step-row">
+        <span class="step-node">
+          @switch (step.state) {
+            @case ('done') {
+              <svg lucideCheck [size]="16" class="step-icon"></svg>
+            }
+            @case ('error') {
+              <svg lucideCircleAlert [size]="16" class="step-icon"></svg>
+            }
+            @case ('current') {
+              <svg lucideLoaderCircle [size]="16" class="step-icon spin"></svg>
+            }
+            @default {
+              <span class="step-dot"></span>
+            }
+          }
+        </span>
+        <div class="step-body">
+          <strong class="step-title">{{ step.title }}</strong>
+          <p class="step-desc">{{ step.desc }}</p>
+          @if (step.errorLabel) {
+            <span class="step-error">{{ step.errorLabel }}</span>
+          } @else if (step.occurredAt) {
+            <span class="muted step-time">{{ formatDateTime(step.occurredAt) }}</span>
+          } @else if (step.state === 'current') {
+            <span class="step-live">En proceso…</span>
+          }
+        </div>
+      </div>
+      @if (index < steps().length - 1) {
+        <span class="step-line"></span>
+      }
+    </li>
+  }
+</ol>
