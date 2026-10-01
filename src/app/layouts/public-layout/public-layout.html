@@ -1,0 +1,67 @@
+<div class="public-shell">
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <a routerLink="/" class="brand">
+        <span class="brand-mark">L</span>
+        <span>LogiCore</span>
+      </a>
+
+      <nav class="nav" aria-label="Navegación principal">
+        @if (auth.isAdmin()) {
+          <a routerLink="/admin" class="nav-link">
+            <svg lucideStore [size]="16"></svg>
+            Panel admin
+          </a>
+        }
+        <a
+          routerLink="/orders"
+          routerLinkActive="nav-link-active"
+          [routerLinkActiveOptions]="{ exact: true }"
+          class="nav-link"
+        >
+          <svg lucideClipboardList [size]="16"></svg>
+          Mis pedidos
+        </a>
+        <a
+          routerLink="/cart"
+          routerLinkActive="nav-link-active"
+          [routerLinkActiveOptions]="{ exact: true }"
+          class="nav-link cart-link"
+        >
+          <svg lucideShoppingCart [size]="16"></svg>
+          Carrito
+          @if (cart.count()) {
+            <span class="cart-badge">{{ cart.count() }}</span>
+          }
+        </a>
+        <button
+          class="btn btn-ghost btn-icon"
+          type="button"
+          (click)="theme.toggle()"
+          [attr.aria-label]="'Cambiar a tema ' + (theme.theme() === 'dark' ? 'claro' : 'oscuro')"
+        >
+          @if (theme.theme() === 'dark') {
+            <svg lucideSun [size]="18"></svg>
+          } @else {
+            <svg lucideMoon [size]="18"></svg>
+          }
+        </button>
+        <div class="user-chip">
+          <span class="avatar">{{ initials(userName()) }}</span>
+          <div class="user-chip-text">
+            <strong>{{ auth.user()?.name }}</strong>
+            <span>{{ auth.user()?.role === 'ADMIN' ? 'Administrador' : 'Cliente' }}</span>
+          </div>
+        </div>
+        <button class="btn btn-ghost btn-sm" (click)="logout()">
+          <svg lucideLogOut [size]="16"></svg>
+          Salir
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <router-outlet />
+  </main>
+</div>

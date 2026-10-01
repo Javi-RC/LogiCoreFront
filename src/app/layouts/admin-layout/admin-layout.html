@@ -1,0 +1,137 @@
+<ng-template #navIcon let-icon let-klass="klass">
+  @switch (icon) {
+    @case ('dashboard') {
+      <svg lucideLayoutDashboard [size]="18" [class]="klass"></svg>
+    }
+    @case ('package') {
+      <svg lucidePackage [size]="18" [class]="klass"></svg>
+    }
+    @case ('boxes') {
+      <svg lucideBoxes [size]="18" [class]="klass"></svg>
+    }
+    @case ('cart') {
+      <svg lucideShoppingCart [size]="18" [class]="klass"></svg>
+    }
+    @case ('truck') {
+      <svg lucideTruck [size]="18" [class]="klass"></svg>
+    }
+    @case ('activity') {
+      <svg lucideActivity [size]="18" [class]="klass"></svg>
+    }
+  }
+</ng-template>
+
+<div class="admin-shell">
+  <aside class="sidebar">
+    <a routerLink="/admin" class="brand">
+      <span class="brand-mark">L</span>
+      <span>LogiCore<br /><small>Administración</small></span>
+    </a>
+
+    <nav class="sidebar-nav">
+      @for (section of sections; track section.label) {
+        <div class="sidebar-section">
+          <span class="section-label">{{ section.label }}</span>
+          @for (link of section.links; track link.to) {
+            <a
+              [routerLink]="link.to"
+              routerLinkActive="sidebar-link-active"
+              [routerLinkActiveOptions]="{ exact: true }"
+              class="sidebar-link"
+            >
+              <ng-container
+                [ngTemplateOutlet]="navIcon"
+                [ngTemplateOutletContext]="{ $implicit: link.icon, klass: 'link-icon' }"
+              />
+              {{ link.label }}
+            </a>
+          }
+        </div>
+      }
+    </nav>
+
+    <div class="sidebar-footer">
+      <a routerLink="/" class="sidebar-link">
+        <svg lucideStore [size]="18" class="link-icon"></svg>
+        Ver tienda
+      </a>
+    </div>
+  </aside>
+
+  <div class="admin-main">
+    <header class="admin-header">
+      <button
+        class="menu-toggle"
+        type="button"
+        aria-label="Abrir menú"
+        (click)="drawerOpen.set(true)"
+      >
+        <svg lucideMenu [size]="20"></svg>
+      </button>
+      <div class="header-spacer"></div>
+      <button
+        class="btn btn-ghost btn-icon"
+        type="button"
+        (click)="theme.toggle()"
+        [attr.aria-label]="'Cambiar a tema ' + (theme.theme() === 'dark' ? 'claro' : 'oscuro')"
+      >
+        @if (theme.theme() === 'dark') {
+          <svg lucideSun [size]="18"></svg>
+        } @else {
+          <svg lucideMoon [size]="18"></svg>
+        }
+      </button>
+      <div class="user-chip">
+        <span class="avatar">{{ initials(auth.user()?.name ?? '') }}</span>
+        <div class="user-chip-text">
+          <strong>{{ auth.user()?.name }}</strong>
+          <span>Administrador</span>
+        </div>
+        <button class="btn btn-ghost btn-sm" (click)="logout()">Salir</button>
+      </div>
+    </header>
+    <main>
+      <router-outlet />
+    </main>
+  </div>
+
+  @if (drawerOpen()) {
+    <div class="drawer-overlay" (click)="drawerOpen.set(false)">
+      <div
+        class="drawer"
+        role="dialog"
+        aria-modal="true"
+        aria-label="Menú de administración"
+        (click)="$event.stopPropagation()"
+      >
+        <div class="drawer-head">
+          <span class="brand-mark">L</span>
+          <button
+            class="menu-toggle"
+            type="button"
+            aria-label="Cerrar menú"
+            (click)="drawerOpen.set(false)"
+          >
+            <svg lucideX [size]="20"></svg>
+          </button>
+        </div>
+        <nav class="drawer-nav">
+          @for (section of sections; track section.label) {
+            <div class="sidebar-section">
+              <span class="section-label">{{ section.label }}</span>
+              @for (link of section.links; track link.to) {
+                <button class="sidebar-link drawer-link" type="button" (click)="go(link.to)">
+                  <ng-container
+                    [ngTemplateOutlet]="navIcon"
+                    [ngTemplateOutletContext]="{ $implicit: link.icon, klass: null }"
+                  />
+                  {{ link.label }}
+                </button>
+              }
+            </div>
+          }
+        </nav>
+      </div>
+    </div>
+  }
+</div>
