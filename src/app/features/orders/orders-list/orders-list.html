@@ -29,15 +29,7 @@
 
   <div class="card">
     @if (loading()) {
-      <div class="orders-skeleton" role="status" aria-label="Cargando pedidos">
-        @for (n of skeletonRows; track n) {
-          <div class="skeleton-row-group">
-            <div class="skeleton skeleton-row" style="width: 140px"></div>
-            <div class="skeleton skeleton-row" style="width: 90px"></div>
-            <div class="skeleton skeleton-row" style="width: 70px"></div>
-          </div>
-        }
-      </div>
+      <app-list-skeleton label="Cargando pedidos" />
     } @else if (orders().length === 0) {
       <app-empty-state
         title="No tienes pedidos aún"

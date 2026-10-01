@@ -19,6 +19,7 @@ import { ProductNamesService } from '../../../core/services/product-names.servic
 import { formatDateTime, formatMoney, formatTime } from '../../../core/util/format';
 import { StatusBadge } from '../../../shared/status-badge/status-badge';
 import { CopyId } from '../../../shared/ui/copy-id/copy-id';
+import { ListSkeleton } from '../../../shared/ui/list-skeleton/list-skeleton';
 
 const REFRESH_INTERVAL_MS = 20000;
 
@@ -55,6 +56,7 @@ interface PipelineStage {
     LucideShoppingCart,
     StatusBadge,
     CopyId,
+    ListSkeleton,
   ],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css',

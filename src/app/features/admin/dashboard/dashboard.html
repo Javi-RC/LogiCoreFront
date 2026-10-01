@@ -30,7 +30,7 @@
   }
 
   @if (loading()) {
-    <div class="empty" role="status"><span class="spinner"></span> Cargando…</div>
+    <div class="card"><app-list-skeleton [rows]="6" /></div>
   } @else if (updatedAt()) {
     <section class="card todo-card" aria-labelledby="todo-title">
       <h2 id="todo-title" class="card-title">Pendiente de acción</h2>

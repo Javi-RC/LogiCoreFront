@@ -54,9 +54,19 @@
           <svg lucidePlus [size]="16"></svg>
         </button>
       </div>
-      <button class="btn btn-primary product-add" type="button" (click)="emitAdd()">
-        <svg lucideShoppingCart [size]="16"></svg>
-        Añadir
+      <button
+        class="btn btn-primary product-add"
+        [class.product-add-done]="added()"
+        type="button"
+        (click)="emitAdd()"
+      >
+        @if (added()) {
+          <svg lucideCheck [size]="16"></svg>
+          Añadido
+        } @else {
+          <svg lucideShoppingCart [size]="16"></svg>
+          Añadir
+        }
       </button>
     </div>
   </div>

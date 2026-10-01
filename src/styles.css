@@ -135,6 +135,11 @@ p {
   min-height: 36px;
 }
 
+.btn:active:not(:disabled),
+.chip:active {
+  transform: translateY(1px);
+}
+
 .btn:disabled {
   opacity: 0.55;
   cursor: not-allowed;

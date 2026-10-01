@@ -9,16 +9,3 @@
   flex-wrap: wrap;
   margin-bottom: 12px;
 }
-
-.orders-skeleton {
-  padding: 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-}
-
-.skeleton-row-group {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}

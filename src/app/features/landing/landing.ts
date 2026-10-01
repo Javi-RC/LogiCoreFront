@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, DestroyRef, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import {
   LucideActivity,
@@ -22,6 +22,17 @@ interface PreviewStep {
   detail: string;
   state: 'done' | 'current' | 'pending';
 }
+
+const STEP_INTERVAL_MS = 2200;
+
+// Las mismas etapas que muestra el seguimiento real de un pedido.
+const STEPS = [
+  { title: 'Pedido creado', detail: 'Hemos recibido tu pedido' },
+  { title: 'Stock reservado', detail: 'Unidades reservadas y pedido confirmado' },
+  { title: 'Envío generado', detail: 'Estamos preparando tu paquete' },
+  { title: 'Envío despachado', detail: 'El paquete sale del almacén' },
+  { title: 'Entregado', detail: 'El pedido llega a su destino' },
+];
 
 @Component({
   selector: 'app-landing',
@@ -47,12 +58,33 @@ interface PreviewStep {
 export class Landing {
   protected readonly theme = inject(ThemeService);
 
-  // Reproduce el seguimiento real de un pedido a mitad de recorrido.
-  protected readonly preview: PreviewStep[] = [
-    { title: 'Pedido creado', detail: 'Hemos recibido tu pedido', state: 'done' },
-    { title: 'Stock reservado', detail: 'Unidades reservadas y pedido confirmado', state: 'done' },
-    { title: 'Envío generado', detail: 'Estamos preparando tu paquete', state: 'done' },
-    { title: 'Envío despachado', detail: 'En proceso…', state: 'current' },
-    { title: 'Entregado', detail: 'El pedido llega a su destino', state: 'pending' },
-  ];
+  // Índice de la etapa en curso; al pasar de la última, el pedido está entregado.
+  private readonly current = signal(3);
+
+  protected readonly preview = computed<PreviewStep[]>(() => {
+    const current = this.current();
+    return STEPS.map((step, index) => ({
+      title: step.title,
+      detail: index === current ? 'En proceso…' : step.detail,
+      state: index < current ? 'done' : index === current ? 'current' : 'pending',
+    }));
+  });
+
+  protected readonly badge = computed(() => {
+    const current = this.current();
+    if (current >= STEPS.length) return { tone: 'delivered', label: 'Entregado' };
+    return current >= 2
+      ? { tone: 'confirmed', label: 'Confirmado' }
+      : { tone: 'pending', label: 'Pendiente' };
+  });
+
+  constructor() {
+    // Con «reducir movimiento» la vista previa se queda fija a mitad de recorrido.
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const timer = setInterval(
+      () => this.current.update((c) => (c >= STEPS.length ? 1 : c + 1)),
+      STEP_INTERVAL_MS,
+    );
+    inject(DestroyRef).onDestroy(() => clearInterval(timer));
+  }
 }

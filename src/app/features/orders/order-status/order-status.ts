@@ -9,6 +9,7 @@ import { ShipmentsApi } from '../../../core/api/shipments.api';
 import type { Notification, Order, Shipment } from '../../../core/models';
 import { ConfirmService } from '../../../core/services/confirm.service';
 import { formatDateTime, formatMoney, shortId } from '../../../core/util/format';
+import { summarizeItems } from '../../../core/util/order-summary';
 import { OrderTimeline } from '../../../shared/order-timeline/order-timeline';
 import { StatusBadge } from '../../../shared/status-badge/status-badge';
 import { CopyId } from '../../../shared/ui/copy-id/copy-id';
@@ -71,6 +72,9 @@ export class OrderStatus {
   });
 
   protected readonly productNames = signal<Record<string, string>>({});
+  protected readonly title = computed(() =>
+    summarizeItems(this.order()?.items ?? [], this.productNames()),
+  );
 
   protected readonly confettiDots = [1, 2, 3, 4, 5, 6, 7, 8];
   protected readonly formatDateTime = formatDateTime;

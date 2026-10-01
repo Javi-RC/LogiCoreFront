@@ -12,12 +12,13 @@ import { compactId, formatDateTime, formatMoney, shortId } from '../../../core/u
 import { StatusBadge } from '../../../shared/status-badge/status-badge';
 import { CopyId } from '../../../shared/ui/copy-id/copy-id';
 import { Pager, paginate } from '../../../shared/ui/pager/pager';
+import { ListSkeleton } from '../../../shared/ui/list-skeleton/list-skeleton';
 
 const STATUSES: OrderStatus[] = ['PENDING', 'CONFIRMED', 'CANCELLED', 'FAILED'];
 
 @Component({
   selector: 'app-admin-orders',
-  imports: [FormsModule, RouterLink, LucideSearch, StatusBadge, CopyId, Pager],
+  imports: [FormsModule, RouterLink, LucideSearch, StatusBadge, CopyId, Pager, ListSkeleton],
   templateUrl: './orders.html',
   styleUrl: './orders.css',
 })

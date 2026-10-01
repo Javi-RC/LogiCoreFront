@@ -10,11 +10,12 @@ import { formatDateTime, formatMoney } from '../../../core/util/format';
 import { StatusBadge } from '../../../shared/status-badge/status-badge';
 import { CopyId } from '../../../shared/ui/copy-id/copy-id';
 import { EmptyState } from '../../../shared/ui/empty-state/empty-state';
+import { ListSkeleton } from '../../../shared/ui/list-skeleton/list-skeleton';
 import { Pager, paginate } from '../../../shared/ui/pager/pager';
 
 @Component({
   selector: 'app-orders-list',
-  imports: [RouterLink, LucidePackageOpen, StatusBadge, CopyId, EmptyState, Pager],
+  imports: [RouterLink, LucidePackageOpen, StatusBadge, CopyId, EmptyState, Pager, ListSkeleton],
   templateUrl: './orders-list.html',
   styleUrl: './orders-list.css',
 })
@@ -61,7 +62,6 @@ export class OrdersList implements OnInit {
   });
   protected readonly paged = computed(() => paginate(this.visible(), this.page(), this.pageSize));
 
-  protected readonly skeletonRows = [1, 2, 3, 4];
   protected readonly formatDateTime = formatDateTime;
   protected readonly formatMoney = formatMoney;
 

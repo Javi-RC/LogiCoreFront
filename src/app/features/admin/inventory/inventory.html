@@ -90,7 +90,7 @@
 
   <div class="card">
     @if (loading()) {
-      <div class="empty" role="status"><span class="spinner"></span> Cargando…</div>
+      <app-list-skeleton />
     } @else {
       <div class="table-wrap">
         <table class="table table-stack">

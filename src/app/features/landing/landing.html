@@ -52,10 +52,10 @@
               <span class="preview-label">Pedido</span>
               <code>3F9A21C07B</code>
             </div>
-            <span class="badge badge-confirmed">Confirmado</span>
+            <span class="badge" [class]="'badge-' + badge().tone">{{ badge().label }}</span>
           </div>
           <ol class="preview-steps" aria-hidden="true">
-            @for (step of preview; track step.title) {
+            @for (step of preview(); track step.title) {
               <li [class]="'preview-step preview-' + step.state">
                 <span class="preview-node">
                   @switch (step.state) {

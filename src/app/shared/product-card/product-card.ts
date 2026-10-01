@@ -1,4 +1,4 @@
-import { Component, computed, input, output, signal } from '@angular/core';
+import { Component, DestroyRef, computed, inject, input, output, signal } from '@angular/core';
 import {
   LucideBox,
   LucideCheck,
@@ -15,6 +15,7 @@ import { formatMoney } from '../../core/util/format';
 import { productVisual } from './product-visual';
 
 const MAX_QUANTITY = 99;
+const ADDED_FEEDBACK_MS = 1400;
 
 @Component({
   selector: 'app-product-card',
@@ -39,6 +40,12 @@ export class ProductCard {
 
   protected readonly visual = computed(() => productVisual(this.product().sku));
   protected readonly quantity = signal(1);
+  protected readonly added = signal(false);
+  private addedTimer: ReturnType<typeof setTimeout> | undefined;
+
+  constructor() {
+    inject(DestroyRef).onDestroy(() => clearTimeout(this.addedTimer));
+  }
   protected readonly max = MAX_QUANTITY;
   protected readonly formatMoney = formatMoney;
 
@@ -49,5 +56,8 @@ export class ProductCard {
   protected emitAdd(): void {
     this.add.emit(this.quantity());
     this.quantity.set(1);
+    this.added.set(true);
+    clearTimeout(this.addedTimer);
+    this.addedTimer = setTimeout(() => this.added.set(false), ADDED_FEEDBACK_MS);
   }
 }

@@ -169,3 +169,9 @@
 .product-add {
   flex: 1;
 }
+
+.product-add-done,
+.product-add-done:hover:not(:disabled) {
+  background: var(--success);
+  color: var(--surface);
+}

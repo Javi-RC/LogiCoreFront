@@ -12,12 +12,21 @@ import { StatusBadge } from '../../../shared/status-badge/status-badge';
 import { CopyId } from '../../../shared/ui/copy-id/copy-id';
 import { FieldError } from '../../../shared/ui/form/field-error';
 import { ValidatedSubmit } from '../../../shared/ui/form/validated-submit';
+import { ListSkeleton } from '../../../shared/ui/list-skeleton/list-skeleton';
 
 const STATUSES: ShipmentStatus[] = ['CREATED', 'SHIPPED', 'DELIVERED'];
 
 @Component({
   selector: 'app-shipments',
-  imports: [FormsModule, RouterLink, StatusBadge, CopyId, FieldError, ValidatedSubmit],
+  imports: [
+    FormsModule,
+    RouterLink,
+    StatusBadge,
+    CopyId,
+    FieldError,
+    ValidatedSubmit,
+    ListSkeleton,
+  ],
   templateUrl: './shipments.html',
   styleUrl: './shipments.css',
 })
