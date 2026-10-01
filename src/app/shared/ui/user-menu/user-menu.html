@@ -1,0 +1,50 @@
+<button
+  #trigger
+  class="user-menu-trigger"
+  type="button"
+  aria-haspopup="true"
+  [attr.aria-expanded]="open()"
+  aria-label="Menú de usuario"
+  (click)="open.set(!open())"
+>
+  <span class="avatar">{{ userInitials() }}</span>
+  <span class="user-menu-text">
+    <strong>{{ auth.user()?.name }}</strong>
+    <span>{{ roleLabel() }}</span>
+  </span>
+  <svg
+    lucideChevronDown
+    [size]="16"
+    class="user-menu-caret"
+    [class.user-menu-caret-open]="open()"
+  ></svg>
+</button>
+
+@if (open()) {
+  <div class="user-menu-panel">
+    <div class="user-menu-head">
+      <strong>{{ auth.user()?.name }}</strong>
+      <span>{{ auth.user()?.email }}</span>
+    </div>
+    <div class="user-menu-items" (click)="open.set(false)">
+      <a routerLink="/account" class="user-menu-item">
+        <svg lucideUser [size]="16"></svg>
+        Mi cuenta
+      </a>
+      <ng-content />
+    </div>
+    <button class="user-menu-item" type="button" (click)="theme.toggle()">
+      @if (theme.theme() === 'dark') {
+        <svg lucideSun [size]="16"></svg>
+        Tema claro
+      } @else {
+        <svg lucideMoon [size]="16"></svg>
+        Tema oscuro
+      }
+    </button>
+    <button class="user-menu-item user-menu-danger" type="button" (click)="logout()">
+      <svg lucideLogOut [size]="16"></svg>
+      Cerrar sesión
+    </button>
+  </div>
+}

@@ -1,5 +1,5 @@
 import { inject } from '@angular/core';
-import { CanActivateFn, Router } from '@angular/router';
+import { CanActivateFn, CanMatchFn, Router } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 
 export const guestGuard: CanActivateFn = () => {
@@ -8,3 +8,6 @@ export const guestGuard: CanActivateFn = () => {
 
   return auth.isAuthenticated() ? router.createUrlTree(['/']) : true;
 };
+
+// Para rutas que solo existen sin sesión (la landing comparte la URL «/» con la tienda).
+export const guestMatch: CanMatchFn = () => !inject(AuthService).isAuthenticated();
