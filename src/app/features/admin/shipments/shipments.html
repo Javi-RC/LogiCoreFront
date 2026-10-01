@@ -2,7 +2,9 @@
   <div class="page-header">
     <div>
       <h1>Envíos</h1>
-      <p class="subtitle">Crea el envío de un pedido confirmado, despáchalo y márcalo entregado</p>
+      <p class="subtitle">
+        Despacha los envíos de los pedidos confirmados y márcalos como entregados
+      </p>
     </div>
     <button
       class="btn btn-primary"
@@ -40,7 +42,8 @@
               <option value="" disabled>Selecciona un pedido…</option>
               @for (o of availableOrders(); track o.id) {
                 <option [value]="o.id">
-                  {{ shortId(o.id) }} · {{ unitsLabel(o) }} · {{ formatMoney(o.total) }}
+                  {{ productNames.summarize(o.items) }} · {{ formatMoney(o.total) }} ·
+                  {{ shortId(o.id) }}
                 </option>
               }
             </select>
@@ -84,7 +87,6 @@
             <tr>
               <th>Envío</th>
               <th>Pedido</th>
-              <th>Contenido</th>
               <th>Creado</th>
               <th>Estado</th>
               <th style="width: 200px">Siguiente paso</th>
@@ -96,12 +98,16 @@
                 <td data-label="Envío">
                   <app-copy-id [value]="shipment.shipmentId" [length]="8" />
                 </td>
-                <td data-label="Pedido">
-                  <a [routerLink]="['/admin/orders', shipment.orderId]" class="order-link">
-                    <code>{{ shortId(shipment.orderId) }}</code>
-                  </a>
+                <td class="cell-main">
+                  <div>
+                    <a [routerLink]="['/admin/orders', shipment.orderId]" class="order-link">
+                      {{ contentOf(shipment) }}
+                    </a>
+                    <div class="cell-sub">
+                      Pedido <code>{{ shortId(shipment.orderId) }}</code>
+                    </div>
+                  </div>
                 </td>
-                <td data-label="Contenido">{{ itemsLabel(shipment) }}</td>
                 <td data-label="Creado" class="muted">{{ formatDateTime(shipment.createdAt) }}</td>
                 <td data-label="Estado"><span [appStatusBadge]="shipment.status"></span></td>
                 <td>
@@ -142,7 +148,7 @@
               </tr>
             } @empty {
               <tr>
-                <td class="empty" colspan="6">
+                <td class="empty" colspan="5">
                   @if (statusFilter() !== 'ALL') {
                     No hay envíos en este estado.
                     <button

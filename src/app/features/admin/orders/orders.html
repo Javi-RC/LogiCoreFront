@@ -56,7 +56,12 @@
           <tbody>
             @for (order of pagedOrders(); track order.id) {
               <tr>
-                <td data-label="Pedido"><app-copy-id [value]="order.id" [length]="8" /></td>
+                <td class="cell-main">
+                  <div>
+                    <strong>{{ productNames.summarize(order.items) }}</strong>
+                    <div class="cell-sub"><app-copy-id [value]="order.id" [length]="8" /></div>
+                  </div>
+                </td>
                 <td data-label="Cliente">
                   <app-copy-id [value]="order.customerId" [length]="8" />
                 </td>

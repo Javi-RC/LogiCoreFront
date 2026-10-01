@@ -3,11 +3,9 @@ import { RouterLink } from '@angular/router';
 import {
   LucideActivity,
   LucideArrowRight,
-  LucideBoxes,
+  LucideCircleAlert,
   LucideCircleCheck,
-  LucideClock,
   LucidePackage,
-  LucidePackageOpen,
   LucideRefreshCw,
   LucideShoppingCart,
 } from '@lucide/angular';
@@ -17,13 +15,12 @@ import { OrdersApi } from '../../../core/api/orders.api';
 import { ProductsApi } from '../../../core/api/products.api';
 import { ShipmentsApi } from '../../../core/api/shipments.api';
 import type { Notification, Order, Product, Shipment } from '../../../core/models';
+import { ProductNamesService } from '../../../core/services/product-names.service';
 import { formatDateTime, formatMoney, formatTime } from '../../../core/util/format';
 import { StatusBadge } from '../../../shared/status-badge/status-badge';
 import { CopyId } from '../../../shared/ui/copy-id/copy-id';
 
 const REFRESH_INTERVAL_MS = 20000;
-
-type FunnelIcon = 'clock' | 'package-open' | 'activity' | 'boxes';
 
 interface Todo {
   key: string;
@@ -35,13 +32,14 @@ interface Todo {
   query: Record<string, string>;
 }
 
-interface FunnelStatus {
+interface PipelineStage {
   key: string;
   label: string;
   desc: string;
   count: number;
-  icon: FunnelIcon;
-  tone: string;
+  share: number;
+  to: string;
+  query: Record<string, string>;
 }
 
 @Component({
@@ -50,11 +48,9 @@ interface FunnelStatus {
     RouterLink,
     LucideActivity,
     LucideArrowRight,
-    LucideBoxes,
+    LucideCircleAlert,
     LucideCircleCheck,
-    LucideClock,
     LucidePackage,
-    LucidePackageOpen,
     LucideRefreshCw,
     LucideShoppingCart,
     StatusBadge,
@@ -69,6 +65,7 @@ export class Dashboard implements OnInit {
   private readonly shipmentsApi = inject(ShipmentsApi);
   private readonly notificationsApi = inject(NotificationsApi);
   private readonly destroyRef = inject(DestroyRef);
+  protected readonly productNames = inject(ProductNamesService);
 
   protected readonly products = signal<Product[]>([]);
   protected readonly orders = signal<Order[]>([]);
@@ -88,53 +85,93 @@ export class Dashboard implements OnInit {
     activeProducts: this.products().filter((p) => p.active).length,
   }));
 
-  protected readonly funnel = computed(() => {
-    const orders = this.orders();
-    const shipments = this.shipments();
-    const pending = orders.filter((o) => o.status === 'PENDING').length;
-    const confirmed = orders.filter((o) => o.status === 'CONFIRMED').length;
-    const shipped = shipments.filter((s) => s.status === 'SHIPPED').length;
-    const delivered = shipments.filter((s) => s.status === 'DELIVERED').length;
-    const max = Math.max(pending, confirmed, shipped, delivered, 1);
-    const failed = orders.filter((o) => o.status === 'FAILED' || o.status === 'CANCELLED').length;
+  protected readonly hovered = signal<string | null>(null);
 
-    const statuses: FunnelStatus[] = [
-      {
-        key: 'PENDING',
-        label: 'Pendientes',
-        desc: 'esperando confirmación',
-        count: pending,
-        icon: 'clock',
-        tone: 'pending',
-      },
-      {
-        key: 'CONFIRMED',
-        label: 'Confirmados',
-        desc: 'stock reservado, saga en curso',
-        count: confirmed,
-        icon: 'package-open',
-        tone: 'confirmed',
-      },
-      {
-        key: 'SHIPPED',
-        label: 'En camino',
-        desc: 'envío despachado',
-        count: shipped,
-        icon: 'activity',
-        tone: 'shipped',
-      },
-      {
-        key: 'DELIVERED',
-        label: 'Entregados',
-        desc: 'saga completada',
-        count: delivered,
-        icon: 'boxes',
-        tone: 'delivered',
-      },
-    ];
+  protected readonly deliveredShipments = computed(
+    () => this.shipments().filter((s) => s.status === 'DELIVERED').length,
+  );
 
-    return { orders: orders.length, delivered, failed, max, statuses };
+  // Cada pedido cae en una sola etapa, así que las etapas suman el total del flujo.
+  protected readonly pipeline = computed(() => {
+    const shipmentStatus = new Map(this.shipments().map((s) => [s.orderId, s.status]));
+    let pending = 0;
+    let toDispatch = 0;
+    let inTransit = 0;
+    let delivered = 0;
+    let failed = 0;
+    for (const order of this.orders()) {
+      if (order.status === 'PENDING') pending++;
+      else if (order.status !== 'CONFIRMED') failed++;
+      else if (shipmentStatus.get(order.id) === 'DELIVERED') delivered++;
+      else if (shipmentStatus.get(order.id) === 'SHIPPED') inTransit++;
+      else toDispatch++;
+    }
+    const active = pending + toDispatch + inTransit + delivered;
+    const stage = (
+      key: string,
+      label: string,
+      desc: string,
+      count: number,
+      to: string,
+      estado: string,
+    ): PipelineStage => ({
+      key,
+      label,
+      desc,
+      count,
+      share: active ? Math.round((count / active) * 100) : 0,
+      to,
+      query: { estado },
+    });
+
+    return {
+      total: this.orders().length,
+      active,
+      failed,
+      stages: [
+        stage(
+          'pending',
+          'Pendientes',
+          'esperando confirmación',
+          pending,
+          '/admin/orders',
+          'PENDING',
+        ),
+        stage(
+          'to-dispatch',
+          'Por despachar',
+          'stock reservado',
+          toDispatch,
+          '/admin/shipments',
+          'CREATED',
+        ),
+        stage(
+          'in-transit',
+          'En camino',
+          'envío despachado',
+          inTransit,
+          '/admin/shipments',
+          'SHIPPED',
+        ),
+        stage(
+          'delivered',
+          'Entregados',
+          'recorrido completo',
+          delivered,
+          '/admin/shipments',
+          'DELIVERED',
+        ),
+      ],
+    };
   });
+
+  protected readonly pipelineSummary = computed(
+    () =>
+      'Reparto de pedidos por etapa: ' +
+      this.pipeline()
+        .stages.map((s) => `${s.label} ${s.count}`)
+        .join(', '),
+  );
 
   protected readonly todos = computed<Todo[]>(() => {
     const shipments = this.shipments();
@@ -186,6 +223,7 @@ export class Dashboard implements OnInit {
     const timer = setInterval(() => void this.load(), REFRESH_INTERVAL_MS);
     this.destroyRef.onDestroy(() => clearInterval(timer));
 
+    void this.productNames.load();
     await this.load();
     this.loading.set(false);
   }

@@ -5,6 +5,7 @@ import { extractError } from '../../../core/api/extract-error';
 import { OrdersApi } from '../../../core/api/orders.api';
 import type { Order, OrderStatus } from '../../../core/models';
 import { AuthService } from '../../../core/services/auth.service';
+import { ProductNamesService } from '../../../core/services/product-names.service';
 import { formatDateTime, formatMoney } from '../../../core/util/format';
 import { StatusBadge } from '../../../shared/status-badge/status-badge';
 import { CopyId } from '../../../shared/ui/copy-id/copy-id';
@@ -20,6 +21,7 @@ import { Pager, paginate } from '../../../shared/ui/pager/pager';
 export class OrdersList implements OnInit {
   private readonly auth = inject(AuthService);
   private readonly ordersApi = inject(OrdersApi);
+  protected readonly productNames = inject(ProductNamesService);
 
   protected readonly orders = signal<Order[]>([]);
   protected readonly loading = signal(true);
@@ -64,6 +66,7 @@ export class OrdersList implements OnInit {
   protected readonly formatMoney = formatMoney;
 
   async ngOnInit(): Promise<void> {
+    void this.productNames.load();
     try {
       const orders = await this.ordersApi.getOrders(this.auth.user()?.id);
       this.orders.set(orders.sort((a, b) => b.createdAt.localeCompare(a.createdAt)));
