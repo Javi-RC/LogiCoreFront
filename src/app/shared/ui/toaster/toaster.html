@@ -1,0 +1,31 @@
+<div class="toast-stack" aria-live="polite" aria-atomic="false">
+  @for (item of toast.items(); track item.id) {
+    <div
+      class="toast"
+      [class]="'toast-' + item.type"
+      [class.toast-leaving]="item.leaving"
+      (animationend)="onAnimationEnd(item)"
+    >
+      @switch (item.type) {
+        @case ('success') {
+          <svg lucideCircleCheck [size]="18" class="toast-icon"></svg>
+        }
+        @case ('error') {
+          <svg lucideCircleAlert [size]="18" class="toast-icon"></svg>
+        }
+        @default {
+          <svg lucideInfo [size]="18" class="toast-icon"></svg>
+        }
+      }
+      <span class="toast-message">{{ item.message }}</span>
+      <button
+        class="toast-close"
+        type="button"
+        aria-label="Cerrar notificación"
+        (click)="toast.dismiss(item.id)"
+      >
+        <svg lucideX [size]="16"></svg>
+      </button>
+    </div>
+  }
+</div>

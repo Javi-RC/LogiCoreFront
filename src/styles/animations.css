@@ -1,6 +1,10 @@
+/* Los componentes enrutados son elementos custom (inline por defecto) */
+router-outlet + * {
+  display: block;
+}
+
 /* Fade-in al montar cada vista */
 app-root > router-outlet + * {
-  display: block;
   animation: page-in 0.18s cubic-bezier(0.4, 0, 0.2, 1);
 }
 

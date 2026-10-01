@@ -1,0 +1,16 @@
+<span class="copy-id">
+  <code class="copy-id-code" [title]="value()">{{ shortId(value(), length()) }}</code>
+  <button
+    class="copy-id-btn"
+    type="button"
+    [attr.aria-label]="'Copiar ' + value()"
+    title="Copiar ID completo"
+    (click)="copy()"
+  >
+    @if (copied()) {
+      <svg lucideCheck [size]="14"></svg>
+    } @else {
+      <svg lucideCopy [size]="14"></svg>
+    }
+  </button>
+</span>

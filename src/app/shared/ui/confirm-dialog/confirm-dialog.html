@@ -1,0 +1,28 @@
+@if (confirm.pending(); as pending) {
+  <div
+    class="modal-overlay"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="confirm-title"
+    (click)="onOverlayClick($event)"
+  >
+    <div class="modal confirm-modal">
+      <h2 id="confirm-title" class="confirm-title">{{ pending.title }}</h2>
+      <p class="confirm-message">{{ pending.message }}</p>
+      <div class="confirm-actions">
+        <button class="btn btn-secondary" type="button" (click)="confirm.resolveTo(false)">
+          Cancelar
+        </button>
+        <button
+          class="btn"
+          [class]="pending.danger ? 'btn-danger' : 'btn-primary'"
+          type="button"
+          autofocus
+          (click)="confirm.resolveTo(true)"
+        >
+          {{ pending.confirmLabel ?? 'Confirmar' }}
+        </button>
+      </div>
+    </div>
+  </div>
+}

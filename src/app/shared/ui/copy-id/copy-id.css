@@ -1,0 +1,37 @@
+:host {
+  display: contents;
+}
+
+.copy-id {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.copy-id-code {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.copy-id-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+}
+
+.copy-id-btn:hover {
+  background: var(--bg);
+  color: var(--ink);
+}
+
+.copy-id-btn svg {
+  color: inherit;
+}
