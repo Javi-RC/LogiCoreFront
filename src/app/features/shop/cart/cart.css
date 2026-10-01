@@ -1,0 +1,46 @@
+.qty-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.qty-value {
+  min-width: 24px;
+  text-align: center;
+  font-weight: 700;
+}
+
+.empty-icon {
+  color: var(--muted);
+  opacity: 0.5;
+}
+
+.summary {
+  max-width: 360px;
+  margin-left: auto;
+}
+
+.summary-line {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font-size: 0.9rem;
+  margin-bottom: 4px;
+}
+
+.summary-total {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 10px;
+}
+
+.summary-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.summary p {
+  font-size: 0.8125rem;
+}

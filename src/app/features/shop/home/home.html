@@ -1,0 +1,83 @@
+<div>
+  <section class="hero">
+    <div class="container">
+      <h1>Bienvenido a LogiCore</h1>
+      <p>
+        Cliente y demo de la saga de logística: crea pedidos, sigue su reserva de stock,
+        confirmación, envío y notificaciones mientras el backend orquesta vía Kafka.
+      </p>
+      <div class="search-box">
+        <svg lucideSearch [size]="18" class="search-icon"></svg>
+        <input
+          [ngModel]="query()"
+          (ngModelChange)="query.set($event)"
+          type="search"
+          placeholder="Buscar producto, SKU o descripción…"
+          aria-label="Buscar producto"
+        />
+      </div>
+    </div>
+  </section>
+
+  <div class="container">
+    @if (loading()) {
+      <div class="empty"><span class="spinner"></span> Cargando catálogo…</div>
+    } @else if (error()) {
+      <div class="alert alert-error">{{ error() }}</div>
+    } @else if (products().length === 0) {
+      <div class="card">
+        <app-empty-state
+          title="El catálogo está vacío"
+          description="Un administrador debe crear productos desde el panel de administración."
+        />
+      </div>
+    } @else {
+      <div class="catalog-toolbar">
+        <div class="price-filters" role="group" aria-label="Filtrar por precio">
+          @for (opt of priceOptions; track opt.value) {
+            <button
+              type="button"
+              class="chip"
+              [class.chip-active]="priceFilter() === opt.value"
+              [attr.aria-pressed]="priceFilter() === opt.value"
+              (click)="priceFilter.set(opt.value)"
+            >
+              {{ opt.label }}
+            </button>
+          }
+        </div>
+        <label class="sort-field">
+          <svg lucideArrowDownWideNarrow [size]="16" class="sort-icon"></svg>
+          <select
+            [ngModel]="sortBy()"
+            (ngModelChange)="sortBy.set($event)"
+            aria-label="Ordenar catálogo"
+          >
+            @for (opt of sortOptions; track opt.value) {
+              <option [value]="opt.value">{{ opt.label }}</option>
+            }
+          </select>
+        </label>
+      </div>
+
+      <p class="results-count muted">
+        {{ filtered().length }} {{ filtered().length === 1 ? 'producto' : 'productos' }}
+      </p>
+
+      @if (filtered().length === 0) {
+        <div class="card">
+          <app-empty-state
+            title="Sin resultados"
+            [description]="'No se encontró nada para «' + (query() || 'ese filtro') + '».'"
+          />
+        </div>
+      } @else {
+        <div class="grid">
+          @for (product of filtered(); track product.id) {
+            <app-product-card [product]="product" (add)="addToCart(product, $event)" />
+          }
+        </div>
+      }
+    }
+  </div>
+</div>

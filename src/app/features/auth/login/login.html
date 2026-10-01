@@ -1,0 +1,50 @@
+<div class="auth-page">
+  <form class="auth-card" ngNativeValidate (ngSubmit)="submit()">
+    <div class="auth-brand">
+      <span class="brand-mark">L</span>
+      <h1>LogiCore</h1>
+      <p class="muted">Inicia sesión para continuar</p>
+    </div>
+
+    @if (error()) {
+      <div class="alert alert-error">{{ error() }}</div>
+    }
+
+    <div class="field">
+      <label for="email">Correo electrónico</label>
+      <input
+        id="email"
+        name="email"
+        [(ngModel)]="email"
+        type="email"
+        autocomplete="email"
+        required
+        autofocus
+      />
+    </div>
+
+    <div class="field">
+      <label for="password">Contraseña</label>
+      <input
+        id="password"
+        name="password"
+        [(ngModel)]="password"
+        type="password"
+        autocomplete="current-password"
+        required
+      />
+    </div>
+
+    <button type="submit" class="btn btn-primary btn-block" [disabled]="busy()">
+      @if (busy()) {
+        <span class="spinner"></span>
+      }
+      Entrar
+    </button>
+
+    <p class="auth-alt">
+      ¿No tienes cuenta?
+      <a routerLink="/register">Crea una</a>
+    </p>
+  </form>
+</div>

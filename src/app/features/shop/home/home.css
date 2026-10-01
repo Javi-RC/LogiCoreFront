@@ -1,0 +1,118 @@
+.hero {
+  background: linear-gradient(120deg, var(--primary) 0%, #7c3aed 100%);
+  color: #fff;
+  padding: 34px 0;
+  margin-bottom: 24px;
+}
+
+.hero h1 {
+  font-size: 1.7rem;
+  margin-bottom: 8px;
+}
+
+.hero p {
+  max-width: 680px;
+  opacity: 0.92;
+  margin: 0 0 18px;
+}
+
+.search-box {
+  position: relative;
+  display: flex;
+  align-items: center;
+  max-width: 460px;
+}
+
+.search-icon {
+  color: var(--muted);
+  position: absolute;
+  left: 12px;
+}
+
+.search-box input {
+  width: 100%;
+  border: none;
+  border-radius: var(--radius-full);
+  padding: 10px 16px 10px 38px;
+  font-size: 0.9rem;
+  font-family: inherit;
+  box-shadow: var(--shadow-lg);
+  background: var(--surface);
+  color: var(--ink);
+}
+
+.catalog-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+
+.price-filters {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.chip {
+  border: 1px solid var(--line);
+  background: var(--surface);
+  border-radius: var(--radius-full);
+  padding: 6px 14px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  font-family: inherit;
+  color: var(--muted);
+  cursor: pointer;
+  transition: background var(--transition), color var(--transition), border-color var(--transition);
+}
+
+.chip:hover {
+  color: var(--ink);
+  border-color: var(--primary);
+}
+
+.chip-active {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: #fff;
+}
+
+.sort-field {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-full);
+  padding: 6px 12px;
+  background: var(--surface);
+}
+
+.sort-icon {
+  color: var(--muted);
+}
+
+.sort-field select {
+  border: none;
+  background: transparent;
+  font-family: inherit;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--ink);
+  cursor: pointer;
+  padding: 0 4px 0 0;
+}
+
+.results-count {
+  font-size: 0.8125rem;
+  margin: 0 0 12px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 16px;
+  padding-bottom: 32px;
+}
