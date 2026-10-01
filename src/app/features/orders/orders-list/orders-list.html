@@ -7,12 +7,29 @@
   </div>
 
   @if (error()) {
-    <div class="alert alert-error">{{ error() }}</div>
+    <div class="alert alert-error" role="alert">{{ error() }}</div>
+  }
+
+  @if (!loading() && orders().length > 0) {
+    <div class="status-filters" role="group" aria-label="Filtrar por estado">
+      @for (opt of statusOptions(); track opt.value) {
+        <button
+          type="button"
+          class="chip"
+          [class.chip-active]="statusFilter() === opt.value"
+          [attr.aria-pressed]="statusFilter() === opt.value"
+          (click)="statusFilter.set(opt.value)"
+        >
+          {{ opt.label }}
+          <span class="chip-count">{{ opt.count }}</span>
+        </button>
+      }
+    </div>
   }
 
   <div class="card">
     @if (loading()) {
-      <div class="orders-skeleton">
+      <div class="orders-skeleton" role="status" aria-label="Cargando pedidos">
         @for (n of skeletonRows; track n) {
           <div class="skeleton-row-group">
             <div class="skeleton skeleton-row" style="width: 140px"></div>
@@ -24,35 +41,50 @@
     } @else if (orders().length === 0) {
       <app-empty-state
         title="No tienes pedidos aún"
-        description="Haz tu primera compra para verla aquí."
+        description="Cuando compres algo podrás seguir aquí cada paso, desde la confirmación hasta la entrega."
       >
         <svg lucidePackageOpen emptyIcon [size]="40" class="empty-icon"></svg>
-        <button emptyAction class="btn btn-primary" routerLink="/">Ver productos</button>
+        <a emptyAction class="btn btn-primary" routerLink="/">Ver catálogo</a>
       </app-empty-state>
     } @else {
       <div class="table-wrap">
-        <table class="table">
+        <table class="table table-stack">
           <thead>
             <tr>
               <th>Pedido</th>
               <th>Estado</th>
               <th>Creado</th>
               <th>Total</th>
-              <th></th>
+              <th><span class="sr-only">Acciones</span></th>
             </tr>
           </thead>
           <tbody>
-            @for (order of orders(); track order.id) {
+            @for (order of paged(); track order.id) {
               <tr>
-                <td>
+                <td data-label="Pedido">
                   <app-copy-id [value]="order.id" [length]="8" />
                 </td>
-                <td><span [appStatusBadge]="order.status"></span></td>
-                <td class="muted">{{ formatDateTime(order.createdAt) }}</td>
-                <td class="muted">{{ formatMoney(order.total) }}</td>
+                <td data-label="Estado"><span [appStatusBadge]="order.status"></span></td>
+                <td data-label="Creado" class="muted">{{ formatDateTime(order.createdAt) }}</td>
+                <td data-label="Total">
+                  <strong>{{ formatMoney(order.total) }}</strong>
+                </td>
                 <td>
-                  <button class="btn btn-ghost btn-sm" [routerLink]="['/orders', order.id]">
-                    Ver
+                  <a class="btn btn-secondary btn-sm" [routerLink]="['/orders', order.id]">
+                    Ver seguimiento
+                  </a>
+                </td>
+              </tr>
+            } @empty {
+              <tr>
+                <td class="empty" colspan="5">
+                  No tienes pedidos en este estado.
+                  <button
+                    class="btn btn-ghost btn-sm"
+                    type="button"
+                    (click)="statusFilter.set('ALL')"
+                  >
+                    Ver todos
                   </button>
                 </td>
               </tr>
@@ -60,6 +92,7 @@
           </tbody>
         </table>
       </div>
+      <app-pager [total]="visible().length" [pageSize]="pageSize" [(page)]="page" />
     }
   </div>
 </div>

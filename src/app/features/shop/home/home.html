@@ -1,11 +1,8 @@
 <div>
   <section class="hero">
     <div class="container">
-      <h1>Bienvenido a LogiCore</h1>
-      <p>
-        Cliente y demo de la saga de logística: crea pedidos, sigue su reserva de stock,
-        confirmación, envío y notificaciones mientras el backend orquesta vía Kafka.
-      </p>
+      <h1>Tienda LogiCore</h1>
+      <p>Añade productos al carrito, crea tu pedido y sigue cada paso hasta la entrega.</p>
       <div class="search-box">
         <svg lucideSearch [size]="18" class="search-icon"></svg>
         <input
@@ -21,9 +18,18 @@
 
   <div class="container">
     @if (loading()) {
-      <div class="empty"><span class="spinner"></span> Cargando catálogo…</div>
+      <div class="grid" role="status" aria-label="Cargando catálogo">
+        @for (n of skeletonCards; track n) {
+          <div class="card-skeleton">
+            <div class="skeleton skeleton-row" style="width: 70%"></div>
+            <div class="skeleton skeleton-row" style="width: 35%"></div>
+            <div class="skeleton skeleton-block"></div>
+            <div class="skeleton skeleton-row" style="width: 50%"></div>
+          </div>
+        }
+      </div>
     } @else if (error()) {
-      <div class="alert alert-error">{{ error() }}</div>
+      <div class="alert alert-error" role="alert">{{ error() }}</div>
     } @else if (products().length === 0) {
       <div class="card">
         <app-empty-state
@@ -60,21 +66,39 @@
         </label>
       </div>
 
-      <p class="results-count muted">
-        {{ filtered().length }} {{ filtered().length === 1 ? 'producto' : 'productos' }}
+      <p class="results-count muted" aria-live="polite">
+        @if (hasFilters()) {
+          Mostrando {{ filtered().length }} de {{ products().length }} productos
+          <button class="link-btn" type="button" (click)="clearFilters()">Limpiar filtros</button>
+        } @else {
+          {{ filtered().length }} {{ filtered().length === 1 ? 'producto' : 'productos' }}
+        }
       </p>
 
       @if (filtered().length === 0) {
         <div class="card">
           <app-empty-state
             title="Sin resultados"
-            [description]="'No se encontró nada para «' + (query() || 'ese filtro') + '».'"
-          />
+            [description]="
+              query()
+                ? 'No encontramos nada para «' + query() + '». Prueba con otro término.'
+                : 'Ningún producto está en ese rango de precio.'
+            "
+          >
+            <svg lucideSearchX emptyIcon [size]="40" class="empty-icon"></svg>
+            <button emptyAction class="btn btn-secondary" type="button" (click)="clearFilters()">
+              Limpiar filtros
+            </button>
+          </app-empty-state>
         </div>
       } @else {
         <div class="grid">
           @for (product of filtered(); track product.id) {
-            <app-product-card [product]="product" (add)="addToCart(product, $event)" />
+            <app-product-card
+              [product]="product"
+              [inCart]="inCart()[product.id] ?? 0"
+              (add)="addToCart(product, $event)"
+            />
           }
         </div>
       }

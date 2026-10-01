@@ -4,6 +4,7 @@ import { LucideArrowLeft, LucidePackageCheck, LucideSparkles } from '@lucide/ang
 import { extractError } from '../../../core/api/extract-error';
 import { NotificationsApi } from '../../../core/api/notifications.api';
 import { OrdersApi } from '../../../core/api/orders.api';
+import { ProductsApi } from '../../../core/api/products.api';
 import { ShipmentsApi } from '../../../core/api/shipments.api';
 import type { Notification, Order, Shipment } from '../../../core/models';
 import { ConfirmService } from '../../../core/services/confirm.service';
@@ -39,12 +40,16 @@ const notifMeta: Record<string, { label: string; tone: string }> = {
 })
 export class OrderStatus {
   private readonly ordersApi = inject(OrdersApi);
+  private readonly productsApi = inject(ProductsApi);
   private readonly shipmentsApi = inject(ShipmentsApi);
   private readonly notificationsApi = inject(NotificationsApi);
   private readonly confirmService = inject(ConfirmService);
 
   // Parámetro de ruta :id (withComponentInputBinding)
   readonly id = input.required<string>();
+  // Datos de ruta: el panel admin reutiliza esta pantalla con su propio enlace de vuelta.
+  readonly backTo = input<string>();
+  readonly backLabel = input<string>();
 
   protected readonly order = signal<Order | null>(null);
   protected readonly shipment = signal<Shipment | null>(null);
@@ -60,6 +65,13 @@ export class OrderStatus {
     () => this.order()?.status === 'CANCELLED' || this.order()?.status === 'FAILED',
   );
 
+  protected readonly cancellable = computed(() => {
+    const status = this.order()?.status;
+    return (status === 'PENDING' || status === 'CONFIRMED') && !this.delivered();
+  });
+
+  protected readonly productNames = signal<Record<string, string>>({});
+
   protected readonly confettiDots = [1, 2, 3, 4, 5, 6, 7, 8];
   protected readonly formatDateTime = formatDateTime;
   protected readonly formatMoney = formatMoney;
@@ -70,6 +82,14 @@ export class OrderStatus {
   private run = 0;
 
   constructor() {
+    // Los nombres son un extra: si falla, se muestra el ID corto del producto.
+    this.productsApi
+      .getProducts()
+      .then((products) =>
+        this.productNames.set(Object.fromEntries(products.map((p) => [p.id, p.name]))),
+      )
+      .catch(() => undefined);
+
     // Recarga y reinicia el polling cada vez que cambia el pedido de la ruta.
     effect((onCleanup) => {
       const orderId = this.id();

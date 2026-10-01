@@ -1,8 +1,10 @@
 <div class="page order-status-page">
   @if (error()) {
-    <div class="alert alert-error">{{ error() }}</div>
-  } @else if (loading()) {
-    <div class="empty"><span class="spinner"></span> Cargando pedido…</div>
+    <div class="alert alert-error" role="alert">{{ error() }}</div>
+  }
+
+  @if (loading()) {
+    <div class="empty" role="status"><span class="spinner"></span> Cargando pedido…</div>
   } @else if (order(); as order) {
     <!-- Celebración -->
     @if (delivered()) {
@@ -15,7 +17,7 @@
             <svg lucideSparkles [size]="18" class="sparkle-icon"></svg>
           </h2>
           <p class="celebrate-sub">
-            La saga ha completado todo su ciclo: desde la creación del pedido hasta la entrega.
+            Tu pedido ha completado todo el recorrido, desde la compra hasta la entrega.
           </p>
         </div>
         <div class="confetti">
@@ -28,18 +30,39 @@
 
     <div class="page-header">
       <div class="header-left">
-        <a routerLink="/orders" class="back-link">
+        <a [routerLink]="backTo() ?? '/orders'" class="back-link">
           <svg lucideArrowLeft [size]="16"></svg>
-          Mis pedidos
+          {{ backLabel() ?? 'Mis pedidos' }}
         </a>
         <h1>Pedido <app-copy-id [value]="order.id" [length]="10" /></h1>
+        <p class="subtitle">
+          {{ formatDateTime(order.createdAt) }} · {{ formatMoney(order.total) }}
+        </p>
       </div>
-      <span [appStatusBadge]="order.status"></span>
+      <div class="header-right">
+        <span [appStatusBadge]="order.status"></span>
+        @if (cancellable()) {
+          <button class="btn btn-secondary btn-cancel" [disabled]="canceling()" (click)="cancel()">
+            @if (canceling()) {
+              <span class="spinner"></span>
+            }
+            Cancelar pedido
+          </button>
+        }
+      </div>
     </div>
 
     <!-- Timeline -->
     <div class="card timeline-card">
-      <h3 class="card-title">Progreso de la saga</h3>
+      <div class="timeline-head">
+        <h2 class="card-title">Seguimiento</h2>
+        @if (!delivered() && !terminal()) {
+          <span class="live muted" role="status">
+            <span class="live-dot"></span>
+            Actualizando en vivo
+          </span>
+        }
+      </div>
       <app-order-timeline
         [order]="order"
         [shipment]="shipment()"
@@ -50,14 +73,9 @@
     <div class="order-grid">
       <!-- Detalle -->
       <div class="card">
-        <h3 class="card-title">Detalle del pedido</h3>
-        <div class="meta-row">
-          <span class="muted">Creado:</span> {{ formatDateTime(order.createdAt) }}
-          <span class="muted" style="margin-left: 12px">Actualizado:</span>
-          {{ formatDateTime(order.updatedAt) }}
-        </div>
+        <h2 class="card-title">Artículos</h2>
         <div class="table-wrap">
-          <table class="table">
+          <table class="table table-stack">
             <thead>
               <tr>
                 <th>Producto</th>
@@ -69,57 +87,53 @@
             <tbody>
               @for (item of order.items; track item.productId) {
                 <tr>
-                  <td>
-                    <code>{{ shortId(item.productId, 6) }}</code>
+                  <td data-label="Producto">
+                    @if (productNames()[item.productId]; as name) {
+                      <strong>{{ name }}</strong>
+                    } @else {
+                      <code>{{ shortId(item.productId, 6) }}</code>
+                    }
                   </td>
-                  <td>{{ item.quantity }}</td>
-                  <td>{{ formatMoney(item.unitPrice) }}</td>
-                  <td>{{ formatMoney(item.subtotal) }}</td>
+                  <td data-label="Cantidad">{{ item.quantity }}</td>
+                  <td data-label="Unitario">{{ formatMoney(item.unitPrice) }}</td>
+                  <td data-label="Subtotal">{{ formatMoney(item.subtotal) }}</td>
                 </tr>
               }
             </tbody>
           </table>
         </div>
         <div class="order-total"><strong>Total:</strong> {{ formatMoney(order.total) }}</div>
-        @if (order.status === 'PENDING' || order.status === 'CONFIRMED') {
-          <div class="actions">
-            <button class="btn btn-danger" [disabled]="canceling()" (click)="cancel()">
-              Cancelar pedido
-            </button>
-          </div>
-        }
       </div>
 
       <!-- Envío -->
       @if (shipment(); as shipment) {
         <div class="card">
-          <h3 class="card-title">Envío</h3>
+          <h2 class="card-title">Envío</h2>
           <div class="shipment-row">
             <div>
-              <span class="muted" style="font-size: 0.78rem">ID del envío</span>
-              <br />
+              <span class="muted shipment-label">ID del envío</span>
               <app-copy-id [value]="shipment.shipmentId" [length]="10" />
             </div>
             <span [appStatusBadge]="shipment.status"></span>
           </div>
-          <div class="meta-row" style="margin-top: 10px">
+          <div class="meta-row">
             <span class="muted">Actualizado:</span> {{ formatDateTime(shipment.updatedAt) }}
           </div>
         </div>
       }
 
-      <!-- Notificaciones -->
-      <div class="card notif-card">
-        <h3 class="card-title">
-          Eventos
-          @if (!delivered() && !terminal()) {
-            <span class="muted" style="font-weight: 400; font-size: 0.78rem; margin-left: 4px">
-              se actualizan mientras la saga procesa…
-            </span>
-          }
-        </h3>
+      <!-- Eventos técnicos de la saga: plegados por defecto -->
+      <details class="card disclosure">
+        <summary>
+          <span>
+            Registro de eventos
+            <span class="muted events-count">({{ notifications().length }})</span>
+          </span>
+        </summary>
         @if (notifications().length === 0) {
-          <div class="empty">Aún no hay eventos registrados.</div>
+          <div class="empty">
+            Aún no hay eventos registrados. Aparecerán aquí a medida que la saga avance.
+          </div>
         } @else {
           <ul class="notif-list">
             @for (n of notifications(); track n.id) {
@@ -133,7 +147,7 @@
             }
           </ul>
         }
-      </div>
+      </details>
     </div>
   }
 </div>

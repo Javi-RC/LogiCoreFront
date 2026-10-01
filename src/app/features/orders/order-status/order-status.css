@@ -27,8 +27,48 @@
   text-decoration: none;
 }
 
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.btn-cancel {
+  color: var(--danger);
+}
+
 .timeline-card {
   margin-bottom: 24px;
+}
+
+.timeline-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.live {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.78rem;
+}
+
+.shipment-label {
+  display: block;
+  font-size: 0.78rem;
+}
+
+.events-count {
+  font-weight: 400;
+  font-size: 0.875rem;
+}
+
+.order-grid > .card + .card {
+  margin-top: 0;
 }
 
 .order-grid {
@@ -39,12 +79,13 @@
 
 .meta-row {
   font-size: 0.85rem;
-  margin-bottom: 12px;
+  margin-top: 10px;
 }
 
 .order-total {
   display: flex;
   justify-content: flex-end;
+  gap: 8px;
   font-size: 1.05rem;
   margin: 12px 0 0;
   padding-top: 10px;
@@ -90,12 +131,20 @@
   font-size: 0.85rem;
 }
 
+.notif-list .muted {
+  font-size: 0.78rem;
+}
+
+.notif-list .badge {
+  flex-shrink: 0;
+}
+
 /* Celebración */
 .celebrate-card {
   position: relative;
   overflow: hidden;
-  background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
-  border: 1px solid #a7f3d0;
+  background: var(--success-soft);
+  border: 1px solid color-mix(in srgb, var(--success) 35%, transparent);
   border-radius: var(--radius-lg);
   padding: 32px 28px;
   margin-bottom: 22px;
@@ -116,17 +165,17 @@
   gap: 6px;
   margin: 0 0 6px;
   font-size: 1.25rem;
-  color: #065f46;
+  color: var(--ink);
 }
 
 .sparkle-icon {
-  color: #10b981;
+  color: var(--success);
 }
 
 .celebrate-sub {
   margin: 0;
   font-size: 0.9rem;
-  color: #047857;
+  color: var(--muted);
 }
 
 .confetti {
@@ -144,14 +193,54 @@
   opacity: 0;
 }
 
-.dot-1 { left: 10%; top: -8px; background: #10b981; animation-delay: 0.1s; }
-.dot-2 { left: 30%; top: -6px; background: var(--primary); animation-delay: 0.3s; }
-.dot-3 { left: 55%; top: -10px; background: #f59e0b; animation-delay: 0.15s; }
-.dot-4 { left: 78%; top: -7px; background: #8b5cf6; animation-delay: 0.25s; }
-.dot-5 { left: 20%; top: -9px; background: #ec4899; animation-delay: 0.4s; }
-.dot-6 { left: 65%; top: -5px; background: #0ea5e9; animation-delay: 0.35s; }
-.dot-7 { left: 42%; top: -11px; background: #34d399; animation-delay: 0.2s; }
-.dot-8 { left: 88%; top: -6px; background: #fbbf24; animation-delay: 0.45s; }
+.dot-1 {
+  left: 10%;
+  top: -8px;
+  background: #10b981;
+  animation-delay: 0.1s;
+}
+.dot-2 {
+  left: 30%;
+  top: -6px;
+  background: var(--primary);
+  animation-delay: 0.3s;
+}
+.dot-3 {
+  left: 55%;
+  top: -10px;
+  background: #f59e0b;
+  animation-delay: 0.15s;
+}
+.dot-4 {
+  left: 78%;
+  top: -7px;
+  background: #8b5cf6;
+  animation-delay: 0.25s;
+}
+.dot-5 {
+  left: 20%;
+  top: -9px;
+  background: #ec4899;
+  animation-delay: 0.4s;
+}
+.dot-6 {
+  left: 65%;
+  top: -5px;
+  background: #0ea5e9;
+  animation-delay: 0.35s;
+}
+.dot-7 {
+  left: 42%;
+  top: -11px;
+  background: #34d399;
+  animation-delay: 0.2s;
+}
+.dot-8 {
+  left: 88%;
+  top: -6px;
+  background: #fbbf24;
+  animation-delay: 0.45s;
+}
 
 @keyframes confetti-fall {
   0% {

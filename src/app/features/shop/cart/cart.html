@@ -4,10 +4,16 @@
       <h1>Tu carrito</h1>
       <p class="subtitle">Revisa tu compra antes de crear el pedido</p>
     </div>
+    @if (!cart.isEmpty()) {
+      <a routerLink="/" class="btn btn-secondary">
+        <svg lucideArrowLeft [size]="16"></svg>
+        Seguir comprando
+      </a>
+    }
   </div>
 
   @if (error()) {
-    <div class="alert alert-error">{{ error() }}</div>
+    <div class="alert alert-error" role="alert">{{ error() }}</div>
   }
 
   @if (cart.isEmpty()) {
@@ -21,80 +27,99 @@
       </app-empty-state>
     </div>
   } @else {
-    <div class="card">
-      <div class="table-wrap">
-        <table class="table">
-          <thead>
-            <tr>
-              <th>Producto</th>
-              <th>Precio</th>
-              <th style="width: 140px">Cantidad</th>
-              <th>Subtotal</th>
-              <th style="width: 60px"></th>
-            </tr>
-          </thead>
-          <tbody>
-            @for (line of cart.lines(); track line.productId) {
+    <div class="cart-layout">
+      <div class="card cart-lines">
+        <div class="table-wrap">
+          <table class="table table-stack">
+            <thead>
               <tr>
-                <td>
-                  <strong>{{ line.name }}</strong>
-                  <div class="muted">{{ line.sku }}</div>
-                </td>
-                <td>{{ formatMoney(line.price) }}</td>
-                <td>
-                  <div class="qty-row">
-                    <button
-                      class="btn btn-ghost btn-sm"
-                      aria-label="Restar uno"
-                      (click)="cart.setQuantity(line.productId, line.quantity - 1)"
-                    >
-                      <svg lucideMinus [size]="16"></svg>
-                    </button>
-                    <span class="qty-value">{{ line.quantity }}</span>
-                    <button
-                      class="btn btn-ghost btn-sm"
-                      aria-label="Sumar uno"
-                      (click)="cart.setQuantity(line.productId, line.quantity + 1)"
-                    >
-                      <svg lucidePlus [size]="16"></svg>
-                    </button>
-                  </div>
-                </td>
-                <td>{{ formatMoney(line.price * line.quantity) }}</td>
-                <td>
-                  <button class="btn btn-ghost btn-sm" (click)="cart.remove(line.productId)">
-                    Quitar
-                  </button>
-                </td>
+                <th>Producto</th>
+                <th>Precio</th>
+                <th style="width: 140px">Cantidad</th>
+                <th>Subtotal</th>
+                <th style="width: 60px"><span class="sr-only">Acciones</span></th>
               </tr>
-            }
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              @for (line of cart.lines(); track line.productId) {
+                <tr>
+                  <td class="line-name">
+                    <div>
+                      <strong>{{ line.name }}</strong>
+                      <div class="muted">{{ line.sku }}</div>
+                    </div>
+                  </td>
+                  <td data-label="Precio">{{ formatMoney(line.price) }}</td>
+                  <td data-label="Cantidad">
+                    <div class="qty-row">
+                      <button
+                        class="btn btn-secondary btn-sm qty-btn"
+                        type="button"
+                        [attr.aria-label]="'Restar uno a ' + line.name"
+                        (click)="cart.setQuantity(line.productId, line.quantity - 1)"
+                      >
+                        <svg lucideMinus [size]="16"></svg>
+                      </button>
+                      <span class="qty-value" aria-live="polite">{{ line.quantity }}</span>
+                      <button
+                        class="btn btn-secondary btn-sm qty-btn"
+                        type="button"
+                        [attr.aria-label]="'Sumar uno a ' + line.name"
+                        (click)="cart.setQuantity(line.productId, line.quantity + 1)"
+                      >
+                        <svg lucidePlus [size]="16"></svg>
+                      </button>
+                    </div>
+                  </td>
+                  <td data-label="Subtotal">
+                    <strong>{{ formatMoney(line.price * line.quantity) }}</strong>
+                  </td>
+                  <td>
+                    <button
+                      class="btn btn-ghost btn-sm"
+                      type="button"
+                      [attr.aria-label]="'Quitar ' + line.name + ' del carrito'"
+                      (click)="cart.remove(line.productId)"
+                    >
+                      Quitar
+                    </button>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+        <div class="cart-footer">
+          <button class="btn btn-ghost btn-sm" type="button" (click)="clearCart()">
+            <svg lucideTrash [size]="16"></svg> Vaciar carrito
+          </button>
+        </div>
       </div>
-    </div>
 
-    <div class="card summary">
-      <div class="summary-line">
-        <span>{{ cart.count() }} {{ cart.count() === 1 ? 'artículo' : 'artículos' }}</span>
-        <span class="muted" style="font-size: 0.8125rem">Total</span>
-      </div>
-      <div class="summary-total">
-        <strong>{{ formatMoney(cart.total()) }}</strong>
-      </div>
-      <p class="muted">
-        Al crear el pedido, el sistema reservará el stock (saga) y te notificaremos el resultado.
-      </p>
-      <div class="summary-actions">
-        <button class="btn btn-primary" [disabled]="busy()" (click)="checkout()">
+      <aside class="card summary" aria-label="Resumen del pedido">
+        <h2 class="card-title">Resumen</h2>
+        <div class="summary-line">
+          <span class="muted">
+            {{ cart.count() }} {{ cart.count() === 1 ? 'artículo' : 'artículos' }}
+          </span>
+          <span>{{ formatMoney(cart.total()) }}</span>
+        </div>
+        <div class="summary-total">
+          <span>Total</span>
+          <strong>{{ formatMoney(cart.total()) }}</strong>
+        </div>
+        <button class="btn btn-primary btn-block" [disabled]="busy()" (click)="checkout()">
           @if (busy()) {
             <span class="spinner"></span>
+            Creando pedido…
+          } @else {
+            Crear pedido
           }
-          Crear pedido
         </button>
-        <button class="btn btn-ghost btn-sm" (click)="clearCart()">
-          <svg lucideTrash [size]="16"></svg> Vaciar
-        </button>
-      </div>
+        <p class="muted summary-note">
+          Al crear el pedido reservamos el stock y podrás seguir su avance en tiempo real.
+        </p>
+      </aside>
     </div>
   }
 </div>

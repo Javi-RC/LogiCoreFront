@@ -3,6 +3,13 @@
   opacity: 0.5;
 }
 
+.status-filters {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+
 .orders-skeleton {
   padding: 16px;
   display: flex;

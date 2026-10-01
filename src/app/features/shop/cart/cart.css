@@ -1,7 +1,30 @@
+.cart-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 320px;
+  gap: 16px;
+  align-items: start;
+}
+
+.cart-layout > .card + .card {
+  margin-top: 0;
+}
+
+.cart-footer {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 12px;
+}
+
 .qty-row {
   display: inline-flex;
   align-items: center;
   gap: 8px;
+}
+
+.qty-btn {
+  width: 32px;
+  min-height: 32px;
+  padding: 0;
 }
 
 .qty-value {
@@ -16,31 +39,53 @@
 }
 
 .summary {
-  max-width: 360px;
-  margin-left: auto;
+  position: sticky;
+  top: 76px;
 }
 
 .summary-line {
   display: flex;
   justify-content: space-between;
   align-items: baseline;
-  font-size: 0.9rem;
-  margin-bottom: 4px;
-}
-
-.summary-total {
-  font-size: 1.4rem;
-  font-weight: 700;
-  color: var(--ink);
+  font-size: 0.875rem;
   margin-bottom: 10px;
 }
 
-.summary-actions {
+.summary-total {
   display: flex;
-  align-items: center;
-  gap: 8px;
+  justify-content: space-between;
+  align-items: baseline;
+  border-top: 1px solid var(--line);
+  padding-top: 12px;
+  margin-bottom: 16px;
 }
 
-.summary p {
-  font-size: 0.8125rem;
+.summary-total strong {
+  font-size: 1.4rem;
+}
+
+.summary-note {
+  font-size: 0.78rem;
+  margin: 12px 0 0;
+}
+
+@media (max-width: 900px) {
+  .cart-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .summary {
+    position: static;
+  }
+}
+
+@media (max-width: 640px) {
+  .line-name {
+    text-align: left;
+  }
+
+  .qty-btn {
+    width: 40px;
+    min-height: 40px;
+  }
 }
