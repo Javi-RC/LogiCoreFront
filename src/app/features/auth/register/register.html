@@ -59,21 +59,6 @@
       <app-field-error id="password-error" [control]="passwordCtrl" />
     </div>
 
-    <div class="field">
-      <label for="role">Tipo de cuenta</label>
-      <select id="role" name="role" [(ngModel)]="role" aria-describedby="role-hint">
-        <option value="CUSTOMER">Cliente</option>
-        <option value="ADMIN">Administrador</option>
-      </select>
-      <small id="role-hint" class="field-hint">
-        @if (role === 'ADMIN') {
-          Además de comprar, accedes al panel para gestionar productos, stock y envíos.
-        } @else {
-          Compra en la tienda y sigue tus pedidos.
-        }
-      </small>
-    </div>
-
     <button type="submit" class="btn btn-primary btn-block" [disabled]="busy()">
       @if (busy()) {
         <span class="spinner"></span>
