@@ -4,53 +4,80 @@
       <h1>Productos</h1>
       <p class="subtitle">Catálogo de la tienda</p>
     </div>
-    @if (!showForm()) {
-      <button class="btn btn-primary" (click)="openCreate()">+ Nuevo producto</button>
-    }
+    <div class="header-tools">
+      <div class="search-field">
+        <svg lucideSearch [size]="16" class="search-field-icon"></svg>
+        <input
+          type="search"
+          [ngModel]="search()"
+          (ngModelChange)="search.set($event)"
+          placeholder="Buscar por nombre o SKU…"
+          aria-label="Buscar producto por nombre o SKU"
+        />
+      </div>
+      @if (!showForm()) {
+        <button class="btn btn-primary" type="button" (click)="openCreate()">
+          + Nuevo producto
+        </button>
+      }
+    </div>
   </div>
 
   @if (error()) {
-    <div class="alert alert-error">{{ error() }}</div>
+    <div class="alert alert-error" role="alert">{{ error() }}</div>
   }
 
   @if (showForm()) {
-    <div class="card">
-      <h3 class="card-title">{{ editingId() ? 'Editar producto' : 'Nuevo producto' }}</h3>
-      <form class="form-grid cols-2" ngNativeValidate (ngSubmit)="submit()">
+    <div class="card form-card" #formCard>
+      <h2 class="card-title">{{ editingId() ? 'Editar producto' : 'Nuevo producto' }}</h2>
+      <form class="form-grid cols-2" (appSubmit)="submit()">
         <div class="field">
-          <label>SKU</label>
+          <label for="product-sku">SKU</label>
           <input
+            id="product-sku"
             name="sku"
             [(ngModel)]="form.sku"
+            #skuCtrl="ngModel"
             [disabled]="!!editingId()"
             placeholder="SKU-001"
             required
           />
+          <app-field-error [control]="skuCtrl" />
+          @if (editingId()) {
+            <small class="field-hint">El SKU no se puede cambiar una vez creado.</small>
+          }
         </div>
         <div class="field">
-          <label>Precio</label>
+          <label for="product-price">Precio</label>
           <input
+            id="product-price"
             name="price"
             [(ngModel)]="form.price"
             type="number"
             step="0.01"
             min="0"
             placeholder="129.99"
+            #priceCtrl="ngModel"
             required
           />
+          <app-field-error [control]="priceCtrl" />
         </div>
         <div class="field" style="grid-column: 1 / -1">
-          <label>Nombre</label>
+          <label for="product-name">Nombre</label>
           <input
+            id="product-name"
             name="name"
             [(ngModel)]="form.name"
             placeholder="Rodamiento de alta precisión"
+            #nameCtrl="ngModel"
             required
           />
+          <app-field-error [control]="nameCtrl" />
         </div>
         <div class="field" style="grid-column: 1 / -1">
-          <label>Descripción</label>
+          <label for="product-description">Descripción</label>
           <textarea
+            id="product-description"
             name="description"
             [(ngModel)]="form.description"
             placeholder="Descripción del producto…"
@@ -69,12 +96,29 @@
     </div>
   }
 
+  @if (!loading() && products().length > 0) {
+    <div class="status-filters" role="group" aria-label="Filtrar por estado">
+      @for (opt of statusOptions(); track opt.value) {
+        <button
+          type="button"
+          class="chip"
+          [class.chip-active]="statusFilter() === opt.value"
+          [attr.aria-pressed]="statusFilter() === opt.value"
+          (click)="statusFilter.set(opt.value)"
+        >
+          {{ opt.label }}
+          <span class="chip-count">{{ opt.count }}</span>
+        </button>
+      }
+    </div>
+  }
+
   <div class="card">
     @if (loading()) {
-      <div class="empty"><span class="spinner"></span> Cargando…</div>
+      <div class="empty" role="status"><span class="spinner"></span> Cargando…</div>
     } @else {
       <div class="table-wrap">
-        <table class="table">
+        <table class="table table-stack">
           <thead>
             <tr>
               <th>SKU</th>
@@ -86,36 +130,71 @@
             </tr>
           </thead>
           <tbody>
-            @for (product of products(); track product.id) {
-              <tr>
-                <td>
+            @for (product of paged(); track product.id) {
+              <tr [class.row-editing]="editingId() === product.id">
+                <td data-label="SKU">
                   <code>{{ product.sku }}</code>
                 </td>
-                <td>
-                  <strong>{{ product.name }}</strong>
-                  <div class="muted" style="font-size: 0.78rem">{{ product.description }}</div>
+                <td class="cell-name">
+                  <div>
+                    <strong>{{ product.name }}</strong>
+                    <div class="muted" style="font-size: 0.78rem">{{ product.description }}</div>
+                  </div>
                 </td>
-                <td>{{ formatMoney(product.price) }}</td>
-                <td><span [appStatusBadge]="product.active ? 'ACTIVE' : 'INACTIVE'"></span></td>
-                <td class="muted">{{ formatDateTime(product.createdAt) }}</td>
+                <td data-label="Precio">{{ formatMoney(product.price) }}</td>
+                <td data-label="Estado">
+                  <span [appStatusBadge]="product.active ? 'ACTIVE' : 'INACTIVE'"></span>
+                </td>
+                <td data-label="Creado" class="muted">{{ formatDateTime(product.createdAt) }}</td>
                 <td>
                   <div class="row-actions">
-                    <button class="btn btn-ghost btn-sm" (click)="openEdit(product)">Editar</button>
-                    <button class="btn btn-ghost btn-sm" (click)="toggleActive(product)">
+                    <button
+                      class="btn btn-secondary btn-sm"
+                      type="button"
+                      (click)="openEdit(product)"
+                    >
+                      Editar
+                    </button>
+                    <button
+                      class="btn btn-ghost btn-sm"
+                      type="button"
+                      [disabled]="busyId() === product.id"
+                      (click)="toggleActive(product)"
+                    >
+                      @if (busyId() === product.id) {
+                        <span class="spinner"></span>
+                      }
                       {{ product.active ? 'Desactivar' : 'Activar' }}
                     </button>
-                    <button class="btn btn-danger btn-sm" (click)="remove(product)">Borrar</button>
+                    <button
+                      class="btn btn-ghost btn-sm btn-delete"
+                      type="button"
+                      [disabled]="busyId() === product.id"
+                      (click)="remove(product)"
+                    >
+                      Borrar
+                    </button>
                   </div>
                 </td>
               </tr>
             } @empty {
               <tr>
-                <td class="empty" colspan="6">No hay productos aún.</td>
+                <td class="empty" colspan="6">
+                  @if (filtered()) {
+                    Ningún producto coincide con los filtros.
+                    <button class="btn btn-ghost btn-sm" type="button" (click)="clearFilters()">
+                      Limpiar filtros
+                    </button>
+                  } @else {
+                    Aún no hay productos. Crea el primero para que aparezca en la tienda.
+                  }
+                </td>
               </tr>
             }
           </tbody>
         </table>
       </div>
+      <app-pager [total]="visible().length" [pageSize]="pageSize" [(page)]="page" />
     }
   </div>
 </div>

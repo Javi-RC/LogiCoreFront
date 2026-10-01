@@ -5,16 +5,16 @@
       <p class="subtitle">Eventos de la saga registrados por el notification-service</p>
     </div>
     <div class="filter-group">
-      <form class="filter" (ngSubmit)="refresh()">
+      <div class="search-field">
+        <svg lucideSearch [size]="16" class="search-field-icon"></svg>
         <input
-          name="filter"
-          [ngModel]="filter"
-          (ngModelChange)="onFilterChange($event)"
-          placeholder="Filtrar por pedido…"
-          aria-label="Filtrar por pedido"
+          type="search"
+          [ngModel]="filter()"
+          (ngModelChange)="filter.set($event)"
+          placeholder="Filtrar por ID de pedido…"
+          aria-label="Filtrar por ID de pedido"
         />
-        <button class="btn btn-secondary" type="submit">Filtrar</button>
-      </form>
+      </div>
       <div class="header-actions">
         @if (updatedAt(); as updatedAt) {
           <span class="updated muted">Actualizado {{ formatTime(updatedAt) }}</span>
@@ -33,17 +33,43 @@
   </div>
 
   @if (error()) {
-    <div class="alert alert-error">{{ error() }}</div>
+    <div class="alert alert-error" role="alert">{{ error() }}</div>
+  }
+
+  @if (!loading() && notifications().length > 0) {
+    <div class="type-filters" role="group" aria-label="Filtrar por tipo de evento">
+      @for (opt of typeOptions(); track opt.value) {
+        <button
+          type="button"
+          class="chip"
+          [class.chip-active]="typeFilter() === opt.value"
+          [attr.aria-pressed]="typeFilter() === opt.value"
+          (click)="typeFilter.set(opt.value)"
+        >
+          {{ opt.label }}
+          <span class="chip-count">{{ opt.count }}</span>
+        </button>
+      }
+    </div>
   }
 
   <div class="card">
     @if (loading()) {
-      <div class="empty"><span class="spinner"></span> Cargando…</div>
-    } @else if (notifications().length === 0) {
-      <div class="empty">Sin notificaciones.</div>
+      <div class="empty" role="status"><span class="spinner"></span> Cargando…</div>
+    } @else if (visible().length === 0) {
+      <div class="empty">
+        @if (filter().trim() || typeFilter() !== 'ALL') {
+          Ningún evento coincide con los filtros.
+          <button class="btn btn-ghost btn-sm" type="button" (click)="clearFilters()">
+            Limpiar filtros
+          </button>
+        } @else {
+          Aún no hay actividad. Los eventos aparecerán aquí cuando se cree el primer pedido.
+        }
+      </div>
     } @else {
       <ul class="notif-list">
-        @for (n of notifications(); track n.id) {
+        @for (n of paged(); track n.id) {
           <li [class]="'notif-item notif-' + notifTone(n.type)">
             <span [appStatusBadge]="notifLabel(n.type)" [tone]="notifTone(n.type)"></span>
             <div class="notif-body">
@@ -56,6 +82,7 @@
           </li>
         }
       </ul>
+      <app-pager [total]="visible().length" [pageSize]="pageSize" [(page)]="page" />
     }
   </div>
 </div>

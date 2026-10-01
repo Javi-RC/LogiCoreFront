@@ -1,5 +1,6 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 import { LucideCircleAlert } from '@lucide/angular';
 import { extractError } from '../../../core/api/extract-error';
 import { InventoryApi } from '../../../core/api/inventory.api';
@@ -7,6 +8,8 @@ import { ProductsApi } from '../../../core/api/products.api';
 import type { InventoryItem, Product } from '../../../core/models';
 import { ToastService } from '../../../core/services/toast.service';
 import { newUuid } from '../../../core/util/format';
+import { FieldError } from '../../../shared/ui/form/field-error';
+import { ValidatedSubmit } from '../../../shared/ui/form/validated-submit';
 
 interface Row {
   product: Product;
@@ -15,7 +18,7 @@ interface Row {
 
 @Component({
   selector: 'app-inventory',
-  imports: [FormsModule, LucideCircleAlert],
+  imports: [FormsModule, RouterLink, LucideCircleAlert, FieldError, ValidatedSubmit],
   templateUrl: './inventory.html',
   styleUrl: './inventory.css',
 })
@@ -30,6 +33,24 @@ export class Inventory implements OnInit {
   protected readonly busyProduct = signal<string | null>(null);
   protected readonly error = signal('');
   protected readonly registering = signal(false);
+  protected readonly showForm = signal(false);
+  protected readonly onlyLow = signal(false);
+
+  protected readonly lowCount = computed(
+    () => this.rows().filter((row) => this.lowStock(row.stock)).length,
+  );
+  protected readonly totals = computed(() =>
+    this.rows().reduce(
+      (acc, row) => ({
+        available: acc.available + (row.stock?.availableQuantity ?? 0),
+        reserved: acc.reserved + (row.stock?.reservedQuantity ?? 0),
+      }),
+      { available: 0, reserved: 0 },
+    ),
+  );
+  protected readonly visibleRows = computed(() =>
+    this.onlyLow() ? this.rows().filter((row) => this.lowStock(row.stock)) : this.rows(),
+  );
 
   protected readonly opQty: Record<string, number> = {};
   protected registerProductId = '';
@@ -123,6 +144,7 @@ export class Inventory implements OnInit {
       this.toast.success('Stock registrado');
       this.registerProductId = '';
       this.registerQty = 1;
+      this.showForm.set(false);
       await this.load();
     } catch (err) {
       this.error.set(extractError(err));

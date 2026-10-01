@@ -2,7 +2,24 @@
   display: grid;
   grid-template-columns: 1fr 140px auto;
   gap: 0 12px;
-  align-items: end;
+  align-items: start;
+}
+
+.register-form > .btn {
+  margin-top: 25px;
+}
+
+.stock-filters {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+
+.stock-totals {
+  margin-left: auto;
+  font-size: 0.8125rem;
 }
 
 .qty-pill {
@@ -68,5 +85,17 @@
 @media (max-width: 640px) {
   .register-form {
     grid-template-columns: 1fr;
+  }
+
+  .register-form > .btn {
+    margin-top: 0;
+  }
+
+  .cell-product {
+    text-align: left;
+  }
+
+  .cell-bar {
+    display: block;
   }
 }

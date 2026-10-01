@@ -1,6 +1,8 @@
 import { Component, DestroyRef, OnInit, computed, inject, signal } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import {
   LucideActivity,
+  LucideArrowRight,
   LucideBoxes,
   LucideCircleCheck,
   LucideClock,
@@ -23,6 +25,16 @@ const REFRESH_INTERVAL_MS = 20000;
 
 type FunnelIcon = 'clock' | 'package-open' | 'activity' | 'boxes';
 
+interface Todo {
+  key: string;
+  count: number;
+  title: string;
+  hint: string;
+  cta: string;
+  to: string;
+  query: Record<string, string>;
+}
+
 interface FunnelStatus {
   key: string;
   label: string;
@@ -35,7 +47,9 @@ interface FunnelStatus {
 @Component({
   selector: 'app-dashboard',
   imports: [
+    RouterLink,
     LucideActivity,
+    LucideArrowRight,
     LucideBoxes,
     LucideCircleCheck,
     LucideClock,
@@ -79,10 +93,8 @@ export class Dashboard implements OnInit {
     const shipments = this.shipments();
     const pending = orders.filter((o) => o.status === 'PENDING').length;
     const confirmed = orders.filter((o) => o.status === 'CONFIRMED').length;
-    const created = shipments.filter((s) => s.status === 'CREATED').length;
     const shipped = shipments.filter((s) => s.status === 'SHIPPED').length;
     const delivered = shipments.filter((s) => s.status === 'DELIVERED').length;
-    const total = orders.length || 1;
     const max = Math.max(pending, confirmed, shipped, delivered, 1);
     const failed = orders.filter((o) => o.status === 'FAILED' || o.status === 'CANCELLED').length;
 
@@ -121,7 +133,49 @@ export class Dashboard implements OnInit {
       },
     ];
 
-    return { pending, confirmed, created, shipped, delivered, failed, total, max, statuses };
+    return { orders: orders.length, delivered, failed, max, statuses };
+  });
+
+  protected readonly todos = computed<Todo[]>(() => {
+    const shipments = this.shipments();
+    const withShipment = new Set(shipments.map((s) => s.orderId));
+    const awaitingShipment = this.orders().filter(
+      (o) => o.status === 'CONFIRMED' && !withShipment.has(o.id),
+    ).length;
+    const toDispatch = shipments.filter((s) => s.status === 'CREATED').length;
+    const toDeliver = shipments.filter((s) => s.status === 'SHIPPED').length;
+
+    const todos: Todo[] = [
+      {
+        key: 'awaiting-shipment',
+        count: awaitingShipment,
+        title:
+          awaitingShipment === 1 ? 'Pedido confirmado sin envío' : 'Pedidos confirmados sin envío',
+        hint: 'El stock ya está reservado',
+        cta: 'Crear envío',
+        to: '/admin/shipments',
+        query: { crear: '1' },
+      },
+      {
+        key: 'to-dispatch',
+        count: toDispatch,
+        title: toDispatch === 1 ? 'Envío por despachar' : 'Envíos por despachar',
+        hint: 'Creados y listos para salir',
+        cta: 'Despachar',
+        to: '/admin/shipments',
+        query: { estado: 'CREATED' },
+      },
+      {
+        key: 'to-deliver',
+        count: toDeliver,
+        title: toDeliver === 1 ? 'Envío en camino' : 'Envíos en camino',
+        hint: 'Pendientes de marcar como entregados',
+        cta: 'Marcar entrega',
+        to: '/admin/shipments',
+        query: { estado: 'SHIPPED' },
+      },
+    ];
+    return todos.filter((t) => t.count > 0);
   });
 
   protected readonly recent = computed(() =>
