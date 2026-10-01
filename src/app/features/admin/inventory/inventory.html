@@ -1,0 +1,135 @@
+<div class="page">
+  <div class="page-header">
+    <div>
+      <h1>Inventario</h1>
+      <p class="subtitle">Niveles de stock por producto y operaciones manuales</p>
+    </div>
+  </div>
+
+  @if (error()) {
+    <div class="alert alert-error">{{ error() }}</div>
+  }
+
+  <div class="card">
+    <h3 class="card-title">Registrar stock</h3>
+    <form class="register-form" ngNativeValidate (ngSubmit)="register()">
+      <div class="field">
+        <label>Producto</label>
+        <select
+          name="registerProductId"
+          [(ngModel)]="registerProductId"
+          [disabled]="products().length === 0"
+          required
+        >
+          <option value="" disabled>Selecciona un producto…</option>
+          @for (p of products(); track p.id) {
+            <option [value]="p.id">{{ p.name }} ({{ p.sku }})</option>
+          }
+        </select>
+      </div>
+      <div class="field">
+        <label>Cantidad</label>
+        <input name="registerQty" [(ngModel)]="registerQty" type="number" min="0" required />
+      </div>
+      <button type="submit" class="btn btn-primary" [disabled]="registering()">
+        @if (registering()) {
+          <span class="spinner"></span>
+        }
+        Registrar
+      </button>
+    </form>
+  </div>
+
+  <div class="card">
+    @if (loading()) {
+      <div class="empty"><span class="spinner"></span> Cargando…</div>
+    } @else {
+      <div class="table-wrap">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Producto</th>
+              <th>Disponible</th>
+              <th>Reservado</th>
+              <th style="width: 200px">Distribución</th>
+              <th style="width: 110px">Cantidad</th>
+              <th style="width: 200px">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (row of rows(); track row.product.id) {
+              <tr [class.row-low]="lowStock(row.stock)">
+                <td>
+                  <strong>{{ row.product.name }}</strong>
+                  <div class="muted" style="font-size: 0.78rem">{{ row.product.sku }}</div>
+                  @if (lowStock(row.stock)) {
+                    <span class="pill-low">
+                      <svg lucideCircleAlert [size]="12"></svg>Stock bajo
+                    </span>
+                  }
+                </td>
+                <td>
+                  <span class="qty-pill">{{ row.stock ? row.stock.availableQuantity : 0 }}</span>
+                </td>
+                <td>
+                  <span class="qty-pill muted">{{
+                    row.stock ? row.stock.reservedQuantity : 0
+                  }}</span>
+                </td>
+                <td>
+                  <div class="stock-bar" aria-hidden="true">
+                    <div
+                      class="stock-bar-available"
+                      [style.width]="pctWidth(row.stock, 'available')"
+                    ></div>
+                    <div
+                      class="stock-bar-reserved"
+                      [style.width]="pctWidth(row.stock, 'reserved')"
+                    ></div>
+                  </div>
+                  @if (!row.stock) {
+                    <div class="muted" style="font-size: 0.72rem">sin stock</div>
+                  }
+                </td>
+                <td>
+                  <input
+                    [(ngModel)]="opQty[row.product.id]"
+                    type="number"
+                    min="1"
+                    class="qty-input"
+                    [disabled]="!row.stock"
+                  />
+                </td>
+                <td>
+                  <div class="row-actions">
+                    <button
+                      class="btn btn-ghost btn-sm"
+                      [disabled]="!row.stock || busyProduct() === row.product.id"
+                      (click)="reserve(row)"
+                    >
+                      @if (busyProduct() === row.product.id) {
+                        <span class="spinner"></span>
+                      }
+                      Reservar
+                    </button>
+                    <button
+                      class="btn btn-ghost btn-sm"
+                      [disabled]="!row.stock || busyProduct() === row.product.id"
+                      (click)="release(row)"
+                    >
+                      Liberar
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            } @empty {
+              <tr>
+                <td class="empty" colspan="6">Aún no hay productos. Créalos desde Productos.</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </div>
+</div>

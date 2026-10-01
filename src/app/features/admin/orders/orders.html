@@ -1,0 +1,76 @@
+<div class="page">
+  <div class="page-header">
+    <div>
+      <h1>Pedidos</h1>
+      <p class="subtitle">Todos los pedidos y su estado en la saga</p>
+    </div>
+    <form class="filter" (ngSubmit)="load()">
+      <input
+        name="filterCustomer"
+        [(ngModel)]="filterCustomer"
+        placeholder="Filtrar por customerId…"
+      />
+      <button class="btn btn-secondary" type="submit">Filtrar</button>
+    </form>
+  </div>
+
+  @if (error()) {
+    <div class="alert alert-error">{{ error() }}</div>
+  }
+
+  <div class="card">
+    @if (loading()) {
+      <div class="empty"><span class="spinner"></span> Cargando…</div>
+    } @else {
+      <div class="table-wrap">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Pedido</th>
+              <th>Cliente</th>
+              <th>Total</th>
+              <th>Creado</th>
+              <th>Estado</th>
+              <th style="width: 190px">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (order of orders(); track order.id) {
+              <tr>
+                <td>
+                  <code>{{ shortId(order.id) }}</code>
+                </td>
+                <td>
+                  <code>{{ shortId(order.customerId) }}</code>
+                </td>
+                <td>{{ formatMoney(order.total) }}</td>
+                <td class="muted">{{ formatDateTime(order.createdAt) }}</td>
+                <td><span [appStatusBadge]="order.status"></span></td>
+                <td>
+                  <div class="row-actions">
+                    <button class="btn btn-ghost btn-sm" [routerLink]="['/orders', order.id]">
+                      Ver
+                    </button>
+                    @if (order.status === 'PENDING' || order.status === 'CONFIRMED') {
+                      <button
+                        class="btn btn-ghost btn-sm"
+                        [disabled]="busyId() === order.id"
+                        (click)="cancel(order)"
+                      >
+                        Cancelar
+                      </button>
+                    }
+                  </div>
+                </td>
+              </tr>
+            } @empty {
+              <tr>
+                <td class="empty" colspan="6">No hay pedidos.</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </div>
+</div>

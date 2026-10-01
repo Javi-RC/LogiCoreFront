@@ -1,0 +1,18 @@
+.filter {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.filter input {
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  padding: 8px 12px;
+  font-size: 0.875rem;
+  min-width: 260px;
+}
+
+.row-actions {
+  display: flex;
+  gap: 4px;
+}

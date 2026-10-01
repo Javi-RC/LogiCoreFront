@@ -1,0 +1,113 @@
+<div class="page">
+  <div class="page-header">
+    <div>
+      <h1>Envíos</h1>
+      <p class="subtitle">Ciclo de vida del envío: creado → enviado → entregado</p>
+    </div>
+    <button class="btn btn-primary" (click)="showForm.set(!showForm())">
+      {{ showForm() ? 'Cerrar' : '+ Crear envío' }}
+    </button>
+  </div>
+
+  @if (error()) {
+    <div class="alert alert-error">{{ error() }}</div>
+  }
+
+  @if (showForm()) {
+    <div class="card">
+      <h3 class="card-title">Crear envío para un pedido confirmado</h3>
+      <form class="create-form" ngNativeValidate (ngSubmit)="createForOrder()">
+        <div class="field">
+          <label>Pedido confirmado</label>
+          <select name="createOrderId" [(ngModel)]="createOrderId" required>
+            <option value="" disabled>Selecciona un pedido…</option>
+            @for (o of availableOrders(); track o.id) {
+              <option [value]="o.id">{{ o.id }} — {{ o.items.length }} artículos</option>
+            }
+          </select>
+        </div>
+        <button
+          type="submit"
+          class="btn btn-primary"
+          [disabled]="creating() || availableOrders().length === 0"
+        >
+          @if (creating()) {
+            <span class="spinner"></span>
+          }
+          Crear
+        </button>
+      </form>
+      @if (availableOrders().length === 0) {
+        <p class="muted">No hay pedidos confirmados sin envío todavía.</p>
+      }
+    </div>
+  }
+
+  <div class="card">
+    @if (loading()) {
+      <div class="empty"><span class="spinner"></span> Cargando…</div>
+    } @else {
+      <div class="table-wrap">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Envío</th>
+              <th>Pedido</th>
+              <th>Ref.</th>
+              <th>Creado</th>
+              <th>Estado</th>
+              <th style="width: 200px">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (shipment of shipments(); track shipment.shipmentId) {
+              <tr>
+                <td>
+                  <code>{{ shortId(shipment.shipmentId) }}</code>
+                </td>
+                <td>
+                  <code>{{ shortId(shipment.orderId) }}</code>
+                </td>
+                <td>{{ itemsLabel(shipment) }}</td>
+                <td class="muted">{{ formatDateTime(shipment.createdAt) }}</td>
+                <td><span [appStatusBadge]="shipment.status"></span></td>
+                <td>
+                  <div class="row-actions">
+                    @if (shipment.status === 'CREATED') {
+                      <button
+                        class="btn btn-ghost btn-sm"
+                        [disabled]="busyId() === shipment.shipmentId"
+                        (click)="ship(shipment)"
+                      >
+                        @if (busyId() === shipment.shipmentId) {
+                          <span class="spinner"></span>
+                        }
+                        Enviar
+                      </button>
+                    }
+                    @if (shipment.status === 'SHIPPED') {
+                      <button
+                        class="btn btn-ghost btn-sm"
+                        [disabled]="busyId() === shipment.shipmentId"
+                        (click)="deliver(shipment)"
+                      >
+                        Entregar
+                      </button>
+                    }
+                    @if (shipment.status === 'DELIVERED') {
+                      <span class="muted">Completado</span>
+                    }
+                  </div>
+                </td>
+              </tr>
+            } @empty {
+              <tr>
+                <td class="empty" colspan="6">No hay envíos todavía.</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </div>
+</div>

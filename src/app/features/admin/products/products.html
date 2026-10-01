@@ -1,0 +1,121 @@
+<div class="page">
+  <div class="page-header">
+    <div>
+      <h1>Productos</h1>
+      <p class="subtitle">Catálogo de la tienda</p>
+    </div>
+    @if (!showForm()) {
+      <button class="btn btn-primary" (click)="openCreate()">+ Nuevo producto</button>
+    }
+  </div>
+
+  @if (error()) {
+    <div class="alert alert-error">{{ error() }}</div>
+  }
+
+  @if (showForm()) {
+    <div class="card">
+      <h3 class="card-title">{{ editingId() ? 'Editar producto' : 'Nuevo producto' }}</h3>
+      <form class="form-grid cols-2" ngNativeValidate (ngSubmit)="submit()">
+        <div class="field">
+          <label>SKU</label>
+          <input
+            name="sku"
+            [(ngModel)]="form.sku"
+            [disabled]="!!editingId()"
+            placeholder="SKU-001"
+            required
+          />
+        </div>
+        <div class="field">
+          <label>Precio</label>
+          <input
+            name="price"
+            [(ngModel)]="form.price"
+            type="number"
+            step="0.01"
+            min="0"
+            placeholder="129.99"
+            required
+          />
+        </div>
+        <div class="field" style="grid-column: 1 / -1">
+          <label>Nombre</label>
+          <input
+            name="name"
+            [(ngModel)]="form.name"
+            placeholder="Rodamiento de alta precisión"
+            required
+          />
+        </div>
+        <div class="field" style="grid-column: 1 / -1">
+          <label>Descripción</label>
+          <textarea
+            name="description"
+            [(ngModel)]="form.description"
+            placeholder="Descripción del producto…"
+          ></textarea>
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary" [disabled]="busy()">
+            @if (busy()) {
+              <span class="spinner"></span>
+            }
+            Guardar
+          </button>
+          <button type="button" class="btn btn-secondary" (click)="closeForm()">Cancelar</button>
+        </div>
+      </form>
+    </div>
+  }
+
+  <div class="card">
+    @if (loading()) {
+      <div class="empty"><span class="spinner"></span> Cargando…</div>
+    } @else {
+      <div class="table-wrap">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>SKU</th>
+              <th>Nombre</th>
+              <th>Precio</th>
+              <th>Estado</th>
+              <th>Creado</th>
+              <th style="width: 230px">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (product of products(); track product.id) {
+              <tr>
+                <td>
+                  <code>{{ product.sku }}</code>
+                </td>
+                <td>
+                  <strong>{{ product.name }}</strong>
+                  <div class="muted" style="font-size: 0.78rem">{{ product.description }}</div>
+                </td>
+                <td>{{ formatMoney(product.price) }}</td>
+                <td><span [appStatusBadge]="product.active ? 'ACTIVE' : 'INACTIVE'"></span></td>
+                <td class="muted">{{ formatDateTime(product.createdAt) }}</td>
+                <td>
+                  <div class="row-actions">
+                    <button class="btn btn-ghost btn-sm" (click)="openEdit(product)">Editar</button>
+                    <button class="btn btn-ghost btn-sm" (click)="toggleActive(product)">
+                      {{ product.active ? 'Desactivar' : 'Activar' }}
+                    </button>
+                    <button class="btn btn-danger btn-sm" (click)="remove(product)">Borrar</button>
+                  </div>
+                </td>
+              </tr>
+            } @empty {
+              <tr>
+                <td class="empty" colspan="6">No hay productos aún.</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </div>
+</div>

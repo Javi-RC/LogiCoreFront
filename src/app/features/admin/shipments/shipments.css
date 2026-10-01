@@ -1,0 +1,17 @@
+.create-form {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0 12px;
+  align-items: end;
+}
+
+.row-actions {
+  display: flex;
+  gap: 4px;
+}
+
+@media (max-width: 640px) {
+  .create-form {
+    grid-template-columns: 1fr;
+  }
+}

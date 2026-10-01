@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { adminGuard } from './core/guards/admin.guard';
 import { authGuard } from './core/guards/auth.guard';
 import { guestGuard } from './core/guards/guest.guard';
 
@@ -43,6 +44,48 @@ export const routes: Routes = [
         title: 'Estado del pedido · LogiCore',
         loadComponent: () =>
           import('./features/orders/order-status/order-status').then((m) => m.OrderStatus),
+      },
+    ],
+  },
+  {
+    path: 'admin',
+    canActivate: [authGuard, adminGuard],
+    loadComponent: () => import('./layouts/admin-layout/admin-layout').then((m) => m.AdminLayout),
+    children: [
+      {
+        path: '',
+        pathMatch: 'full',
+        title: 'Dashboard · LogiCore',
+        loadComponent: () =>
+          import('./features/admin/dashboard/dashboard').then((m) => m.Dashboard),
+      },
+      {
+        path: 'products',
+        title: 'Productos · LogiCore',
+        loadComponent: () => import('./features/admin/products/products').then((m) => m.Products),
+      },
+      {
+        path: 'inventory',
+        title: 'Inventario · LogiCore',
+        loadComponent: () =>
+          import('./features/admin/inventory/inventory').then((m) => m.Inventory),
+      },
+      {
+        path: 'orders',
+        title: 'Pedidos · LogiCore',
+        loadComponent: () => import('./features/admin/orders/orders').then((m) => m.AdminOrders),
+      },
+      {
+        path: 'shipments',
+        title: 'Envíos · LogiCore',
+        loadComponent: () =>
+          import('./features/admin/shipments/shipments').then((m) => m.Shipments),
+      },
+      {
+        path: 'notifications',
+        title: 'Actividad · LogiCore',
+        loadComponent: () =>
+          import('./features/admin/notifications/notifications').then((m) => m.Notifications),
       },
     ],
   },

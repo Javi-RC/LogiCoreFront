@@ -1,0 +1,88 @@
+.filter-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.updated {
+  font-size: 0.78rem;
+}
+
+.spin {
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.filter {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.filter input {
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  padding: 8px 12px;
+  font-size: 0.875rem;
+  min-width: 260px;
+  background: var(--surface);
+  color: var(--ink);
+}
+
+.notif-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.notif-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  border: 1px solid var(--line);
+  border-left-width: 3px;
+  border-radius: var(--radius-sm);
+  padding: 10px 12px;
+}
+
+.notif-info { border-left-color: var(--info); }
+.notif-success { border-left-color: var(--success); }
+.notif-danger { border-left-color: var(--danger); }
+.notif-warning { border-left-color: var(--warning); }
+.notif-violet { border-left-color: var(--violet); }
+
+.notif-body .muted {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 2px;
+}
+
+.notif-list li > .badge {
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.notif-body {
+  min-width: 0;
+  font-size: 0.9rem;
+}
+
+.notif-body .muted {
+  font-size: 0.78rem;
+}

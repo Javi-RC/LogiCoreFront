@@ -1,0 +1,135 @@
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.updated {
+  font-size: 0.78rem;
+}
+
+.spin {
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 14px;
+  margin-bottom: 18px;
+}
+
+.stat {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.stat-icon {
+  color: var(--primary);
+  margin-bottom: 6px;
+}
+
+.stat-label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.stat strong {
+  font-size: 1.7rem;
+  color: var(--primary);
+}
+
+.stat small {
+  font-size: 0.78rem;
+}
+
+.funnel-labels {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.funnel-label {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 12px;
+}
+
+.funnel-label > div {
+  display: flex;
+  flex-direction: column;
+}
+
+.funnel-label strong {
+  font-size: 0.8rem;
+}
+
+.funnel-count {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--ink);
+  line-height: 1.1;
+}
+
+.funnel-label small {
+  font-size: 0.72rem;
+}
+
+.funnel-pending { color: var(--primary); }
+.funnel-confirmed { color: var(--info); }
+.funnel-shipped { color: var(--violet); }
+.funnel-delivered { color: var(--success); }
+
+.funnel-label.delivered strong,
+.funnel-label.delivered small {
+  color: inherit;
+}
+
+.funnel-bars {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.funnel-bar {
+  height: 10px;
+  border-radius: var(--radius-full);
+  background: var(--bg);
+  overflow: hidden;
+}
+
+.funnel-bar-fill {
+  height: 100%;
+  border-radius: var(--radius-full);
+  transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.funnel-pending .funnel-bar-fill { background: var(--primary); }
+.funnel-confirmed .funnel-bar-fill { background: var(--info); }
+.funnel-shipped .funnel-bar-fill { background: var(--violet); }
+.funnel-delivered .funnel-bar-fill { background: var(--success); }
+
+@media (max-width: 640px) {
+  .funnel-labels {
+    grid-template-columns: 1fr;
+  }
+}

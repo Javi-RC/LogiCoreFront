@@ -1,0 +1,61 @@
+<div class="page">
+  <div class="page-header">
+    <div>
+      <h1>Actividad</h1>
+      <p class="subtitle">Eventos de la saga registrados por el notification-service</p>
+    </div>
+    <div class="filter-group">
+      <form class="filter" (ngSubmit)="refresh()">
+        <input
+          name="filter"
+          [ngModel]="filter"
+          (ngModelChange)="onFilterChange($event)"
+          placeholder="Filtrar por pedido…"
+          aria-label="Filtrar por pedido"
+        />
+        <button class="btn btn-secondary" type="submit">Filtrar</button>
+      </form>
+      <div class="header-actions">
+        @if (updatedAt(); as updatedAt) {
+          <span class="updated muted">Actualizado {{ formatTime(updatedAt) }}</span>
+        }
+        <button
+          class="btn btn-ghost btn-icon"
+          type="button"
+          aria-label="Refrescar actividad"
+          [disabled]="refreshing()"
+          (click)="refresh()"
+        >
+          <svg lucideRefreshCw [size]="16" [class]="refreshing() ? 'spin' : null"></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  @if (error()) {
+    <div class="alert alert-error">{{ error() }}</div>
+  }
+
+  <div class="card">
+    @if (loading()) {
+      <div class="empty"><span class="spinner"></span> Cargando…</div>
+    } @else if (notifications().length === 0) {
+      <div class="empty">Sin notificaciones.</div>
+    } @else {
+      <ul class="notif-list">
+        @for (n of notifications(); track n.id) {
+          <li [class]="'notif-item notif-' + notifTone(n.type)">
+            <span [appStatusBadge]="notifLabel(n.type)" [tone]="notifTone(n.type)"></span>
+            <div class="notif-body">
+              <strong>{{ n.message }}</strong>
+              <div class="muted">
+                <app-copy-id [value]="n.correlationId" [length]="8" /> · {{ n.recipient }} ·
+                {{ formatDateTime(n.createdAt) }}
+              </div>
+            </div>
+          </li>
+        }
+      </ul>
+    }
+  </div>
+</div>
