@@ -43,7 +43,7 @@
   height: 34px;
   border-radius: 8px;
   background: var(--primary);
-  color: #fff;
+  color: var(--on-primary);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -101,12 +101,12 @@
 
 .sidebar-link-active {
   background: var(--primary);
-  color: #fff;
+  color: var(--on-primary);
 }
 
 .sidebar-link-active:hover {
   background: var(--primary);
-  color: #fff;
+  color: var(--on-primary);
 }
 
 .link-icon {

@@ -17,7 +17,7 @@
 
 .demo-btn-main {
   background: var(--primary);
-  color: #fff;
+  color: var(--on-primary);
 }
 
 .demo-btn-main:hover:not(:disabled) {
@@ -56,15 +56,6 @@
 }
 
 /* Sobre el degradado del hero */
-.demo-light .demo-btn-main {
-  background: #fff;
-  color: #3730a3;
-}
-
-.demo-light .demo-btn-main:hover:not(:disabled) {
-  background: #eef2ff;
-}
-
 .demo-light .demo-btn-alt {
   background: transparent;
   color: #fff;

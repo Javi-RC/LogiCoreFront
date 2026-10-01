@@ -1,3 +1,5 @@
+@import '@fontsource-variable/archivo';
+@import '@fontsource-variable/jetbrains-mono';
 @import './styles/tokens.css';
 
 * {
@@ -24,6 +26,13 @@ h3,
 h4 {
   margin: 0 0 0.5rem;
   line-height: 1.2;
+  letter-spacing: -0.015em;
+}
+
+code,
+kbd {
+  font-family: var(--font-mono);
+  font-size: 0.86em;
 }
 
 a {
@@ -133,7 +142,7 @@ p {
 
 .btn-primary {
   background: var(--primary);
-  color: #fff;
+  color: var(--on-primary);
 }
 
 .btn-primary:hover:not(:disabled) {
@@ -418,7 +427,7 @@ p {
 .chip-active:hover {
   background: var(--primary);
   border-color: var(--primary);
-  color: #fff;
+  color: var(--on-primary);
 }
 
 .chip-count {
@@ -449,6 +458,13 @@ p {
   max-width: 100%;
   background: var(--surface);
   color: var(--ink);
+}
+
+/* Celda principal de una fila: qué es, con su identificador debajo. */
+.cell-sub {
+  margin-top: 2px;
+  font-size: 0.78rem;
+  color: var(--muted);
 }
 
 .muted {
@@ -708,6 +724,10 @@ p {
     color: var(--muted);
     text-align: left;
     flex-shrink: 0;
+  }
+
+  .table-stack td.cell-main {
+    text-align: left;
   }
 
   .table-stack td.empty {

@@ -1,7 +1,9 @@
 <div class="auth-page">
   <form class="auth-card" (appSubmit)="submit()">
     <div class="auth-brand">
-      <a routerLink="/" class="brand-mark" aria-label="LogiCore, volver al inicio">L</a>
+      <a routerLink="/" class="brand-link" aria-label="LogiCore, volver al inicio">
+        <app-logo [size]="44" />
+      </a>
       <h1>LogiCore</h1>
       <p class="muted">Inicia sesión para continuar</p>
     </div>

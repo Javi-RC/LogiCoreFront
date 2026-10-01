@@ -24,7 +24,7 @@
 <div class="admin-shell">
   <aside class="sidebar">
     <a routerLink="/admin" class="brand">
-      <span class="brand-mark">L</span>
+      <app-logo [size]="34" />
       <span>LogiCore<br /><small>Administración</small></span>
     </a>
 
@@ -102,7 +102,7 @@
         (click)="$event.stopPropagation()"
       >
         <div class="drawer-head">
-          <span class="brand-mark">L</span>
+          <app-logo [size]="34" />
           <button
             class="menu-toggle"
             type="button"

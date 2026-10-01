@@ -5,12 +5,13 @@ import { extractError } from '../../../core/api/extract-error';
 import { AuthService } from '../../../core/services/auth.service';
 import { DemoService } from '../../../core/services/demo.service';
 import { DemoAccess } from '../../../shared/ui/demo-access/demo-access';
+import { Logo } from '../../../shared/ui/logo/logo';
 import { FieldError } from '../../../shared/ui/form/field-error';
 import { ValidatedSubmit } from '../../../shared/ui/form/validated-submit';
 
 @Component({
   selector: 'app-login',
-  imports: [FormsModule, RouterLink, FieldError, ValidatedSubmit, DemoAccess],
+  imports: [FormsModule, RouterLink, FieldError, ValidatedSubmit, Logo, DemoAccess],
   templateUrl: './login.html',
   styleUrl: './login.css',
 })

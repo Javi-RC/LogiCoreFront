@@ -1,41 +1,57 @@
+/*
+ * Identidad LogiCore: grafito cálido + naranja señal.
+ * --primary se usa como texto/acento y como relleno; el texto sobre un relleno
+ * primario lleva siempre --on-primary (blanco en claro, grafito en oscuro).
+ */
 :root {
-  --primary: #4f46e5;
-  --primary-dark: #4338ca;
-  --primary-soft: #eef2ff;
+  --primary: #c2410c;
+  --primary-dark: #9a3412;
+  --primary-soft: #fff1e6;
+  --on-primary: #ffffff;
   --danger: #dc2626;
   --danger-soft: #fef2f2;
-  --success: #16a34a;
+  --success: #15803d;
   --success-soft: #f0fdf4;
-  --warning: #d97706;
-  --warning-soft: #fffbeb;
+  --warning: #a16207;
+  --warning-soft: #fefce8;
   --info: #2563eb;
   --info-soft: #eff6ff;
   --violet: #7c3aed;
   --violet-soft: #f5f3ff;
   --sky: #0284c7;
   --sky-soft: #f0f9ff;
-  --ink: #0f172a;
-  --muted: #64748b;
-  --line: #e2e8f0;
+  --ink: #1c1917;
+  --muted: #66605b;
+  --line: #e7e5e4;
   --surface: #ffffff;
-  --bg: #f8fafc;
-  --sidebar-bg: #0f172a;
-  --auth-bg: linear-gradient(160deg, #eef2ff 0%, #f8fafc 40%);
+  --bg: #f7f5f2;
+  --row-hover: #faf8f6;
+  --sidebar-bg: #1c1917;
+  --sidebar-ink: #d6d3d1;
+  --sidebar-muted: #a8a29e;
+  --sidebar-label: #8a837d;
+  --sidebar-hover: #2c2826;
+  --auth-bg: linear-gradient(160deg, #fff1e6 0%, #f7f5f2 45%);
+  --hero-bg:
+    radial-gradient(820px 360px at 88% -20%, rgba(234, 88, 12, 0.42), transparent 62%),
+    linear-gradient(120deg, #1c1917 0%, #2c2826 100%);
+  --hero-ink: #ffffff;
+  /* Rampa de un solo tono para las etapas del pedido (de menos a más avanzado). */
+  --stage-1: #fdba74;
+  --stage-2: #f97316;
+  --stage-3: #c2410c;
+  --stage-4: #7c2d12;
   --radius: 10px;
   --radius-sm: 6px;
   --radius-lg: 14px;
   --radius-full: 999px;
-  --shadow: 0 1px 3px rgba(15, 23, 42, 0.08), 0 1px 2px rgba(15, 23, 42, 0.04);
-  --shadow-md: 0 4px 12px rgba(15, 23, 42, 0.1);
-  --shadow-lg: 0 10px 24px rgba(15, 23, 42, 0.12);
-  --font: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --shadow: 0 1px 3px rgba(28, 25, 23, 0.08), 0 1px 2px rgba(28, 25, 23, 0.04);
+  --shadow-md: 0 4px 12px rgba(28, 25, 23, 0.1);
+  --shadow-lg: 0 10px 24px rgba(28, 25, 23, 0.14);
+  --font: 'Archivo Variable', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'JetBrains Mono Variable', ui-monospace, 'Cascadia Mono', Consolas, monospace;
   --transition: 150ms cubic-bezier(0.4, 0, 0.2, 1);
   --focus-ring: 0 0 0 2px var(--surface), 0 0 0 4px var(--primary);
-  --row-hover: #fafbfc;
-  --sidebar-ink: #cbd5e1;
-  --sidebar-muted: #94a3b8;
-  --sidebar-label: #64748b;
-  --sidebar-hover: #1e293b;
   --space-1: 4px;
   --space-2: 8px;
   --space-3: 12px;
@@ -51,31 +67,40 @@
 }
 
 :root[data-theme='dark'] {
-  --primary: #6366f1;
-  --primary-dark: #818cf8;
-  --primary-soft: rgba(99, 102, 241, 0.16);
+  --primary: #fb923c;
+  --primary-dark: #fdba74;
+  --primary-soft: rgba(251, 146, 60, 0.16);
+  --on-primary: #1c1917;
   --danger: #f87171;
   --danger-soft: rgba(248, 113, 113, 0.14);
-  --success: #34d399;
-  --success-soft: rgba(52, 211, 153, 0.14);
-  --warning: #fbbf24;
-  --warning-soft: rgba(251, 191, 36, 0.14);
+  --success: #4ade80;
+  --success-soft: rgba(74, 222, 128, 0.14);
+  --warning: #facc15;
+  --warning-soft: rgba(250, 204, 21, 0.14);
   --info: #60a5fa;
   --info-soft: rgba(96, 165, 250, 0.14);
   --violet: #a78bfa;
   --violet-soft: rgba(167, 139, 250, 0.14);
   --sky: #38bdf8;
   --sky-soft: rgba(56, 189, 248, 0.14);
-  --ink: #f1f5f9;
-  --muted: #94a3b8;
-  --line: #1e293b;
-  --surface: #111827;
-  --bg: #0b1220;
-  --sidebar-bg: #0a0f1c;
-  --auth-bg: linear-gradient(160deg, #111827 0%, #0b1220 40%);
+  --ink: #fafaf9;
+  --muted: #a8a29e;
+  --line: #2e2a27;
+  --surface: #1c1917;
+  --bg: #0f0d0c;
+  --row-hover: #262220;
+  --sidebar-bg: #0a0908;
+  --sidebar-hover: #262220;
+  --auth-bg: linear-gradient(160deg, #1c1917 0%, #0f0d0c 45%);
+  --hero-bg:
+    radial-gradient(820px 360px at 88% -20%, rgba(234, 88, 12, 0.38), transparent 62%),
+    linear-gradient(120deg, #1c1917 0%, #262220 100%);
+  --stage-1: #7c2d12;
+  --stage-2: #c2410c;
+  --stage-3: #f97316;
+  --stage-4: #fdba74;
   --shadow: 0 1px 3px rgba(0, 0, 0, 0.4), 0 1px 2px rgba(0, 0, 0, 0.3);
   --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.45);
   --shadow-lg: 0 10px 24px rgba(0, 0, 0, 0.5);
-  --row-hover: #1e293b;
   color-scheme: dark;
 }

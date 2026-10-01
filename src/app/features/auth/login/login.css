@@ -27,7 +27,7 @@
   height: 44px;
   border-radius: 10px;
   background: var(--primary);
-  color: #fff;
+  color: var(--on-primary);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -67,4 +67,9 @@
   font-size: 0.8125rem;
   font-weight: 600;
   color: var(--muted);
+}
+
+.brand-link {
+  display: inline-flex;
+  margin-bottom: 10px;
 }

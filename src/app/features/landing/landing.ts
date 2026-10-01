@@ -15,6 +15,7 @@ import {
 } from '@lucide/angular';
 import { ThemeService } from '../../core/services/theme.service';
 import { DemoAccess } from '../../shared/ui/demo-access/demo-access';
+import { Logo } from '../../shared/ui/logo/logo';
 
 interface PreviewStep {
   title: string;
@@ -27,6 +28,7 @@ interface PreviewStep {
   imports: [
     RouterLink,
     DemoAccess,
+    Logo,
     LucideActivity,
     LucideBoxes,
     LucideCheck,

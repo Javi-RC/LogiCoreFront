@@ -60,7 +60,7 @@ main {
   height: 32px;
   border-radius: 8px;
   background: var(--primary);
-  color: #fff;
+  color: var(--on-primary);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -89,15 +89,6 @@ main {
   font-size: 0.9375rem;
 }
 
-.btn-light {
-  background: #fff;
-  color: #3730a3;
-}
-
-.btn-light:hover {
-  background: #eef2ff;
-}
-
 .btn-outline-light {
   background: transparent;
   color: #fff;
@@ -108,14 +99,13 @@ main {
   background: rgba(255, 255, 255, 0.12);
 }
 
-.btn-light:focus-visible,
 .btn-outline-light:focus-visible {
   outline-color: #fff;
 }
 
 /* Hero */
 .hero {
-  background: linear-gradient(120deg, #4f46e5 0%, #7c3aed 100%);
+  background: var(--hero-bg);
   color: #fff;
   padding: 64px 0 72px;
 }
@@ -404,7 +394,7 @@ main {
 }
 
 .cta {
-  background: linear-gradient(120deg, #4f46e5 0%, #7c3aed 100%);
+  background: var(--hero-bg);
   color: #fff;
   padding: 48px 0;
 }
